@@ -11,6 +11,8 @@ func NewRouter() *gin.Engine{
 	r := gin.Default()
 	// r.GET("/ping", Pong)
 
+	//r.Use(middlewares.AuthMiddleware()) // Sử dụng middleware xác thực cho tất cả các route
+
 	v1 := r.Group("/v1/user") 
 	{
 		v1.GET("/ping", Pong)
