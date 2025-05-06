@@ -1,6 +1,7 @@
 package routers
 
 import (
+	c "Gober/internal/controller"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -10,9 +11,10 @@ func NewRouter() *gin.Engine{
 	r := gin.Default()
 	// r.GET("/ping", Pong)
 
-	v1 := r.Group("/v1") 
+	v1 := r.Group("/v1/user") 
 	{
 		v1.GET("/ping", Pong)
+		v1.GET("", c.NewUserController().GetUserById)
 	}
 
 	return r
