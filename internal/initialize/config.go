@@ -1,4 +1,4 @@
-package config
+package initialize
 
 import (
 	"fmt"
@@ -30,7 +30,7 @@ type DatabaseConfig struct {
 func LoadConfig() (Config, error) {
 	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")
-	viper.AddConfigPath(".")
+	viper.AddConfigPath("./configs")
 
 	// Thiết lập giá trị mặc định
 	viper.SetDefault("server.host", "127.0.0.1")

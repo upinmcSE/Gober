@@ -1,6 +1,7 @@
 package middlewares
 
 import (
+	"Gober/common/response"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -11,8 +12,7 @@ func AuthMiddleware() gin.HandlerFunc {
 		// Lấy token từ header
 		token := c.GetHeader("Authorization")
 		if token == "" {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Authorization header is required"})
-			c.Abort()
+			response.ErrorResponse(c, response.ErrCodeUnauthorized)
 			return
 		}
 
