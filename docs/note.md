@@ -2,3 +2,4 @@
 -  gói viper
 -  gói jwt "golang-jwt/jwt/v5"
 -  gói testify 
+-  wire dependency injection

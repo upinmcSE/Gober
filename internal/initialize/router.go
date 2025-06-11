@@ -4,15 +4,15 @@ import (
 	"Gober/internal/routers"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
-func InitRouter() *gin.Engine{
+func InitRouter(db *gorm.DB) *gin.Engine{
 	r := gin.Default()
 	// r.GET("/ping", Pong)
 
-	//r.Use(middlewares.AuthMiddleware()) // Sử dụng middleware xác thực cho tất cả các route
-
-	routers.UserRouter(r)
+	routers.UserRouter(r, db)
+	routers.AuthRouter(r, db)
 
 	return r
 }
