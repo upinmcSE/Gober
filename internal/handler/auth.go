@@ -40,3 +40,28 @@ func (h *AuthHandler) Register(c *gin.Context) {
 	// Trả về phản hồi thành công
 	response.SuccessResponse(c, response.ErrCodeSuccess, resp)
 }
+
+func (h *AuthHandler) Login(c *gin.Context) {
+	var req logic.LoginRequest
+
+	// Validate request
+	if err := c.ShouldBindJSON(&req); err != nil {
+		response.ErrorResponse(c, response.ErrCodeInvalidParams)
+		return
+	}
+
+	// Gọi logic đăng nhập
+	resp, err := h.authLogic.Login(c.Request.Context(), &req)
+	if err != nil {
+		// Kiểm tra nếu lỗi là CustomError
+		if customErr, ok := err.(*response.CustomError); ok {
+			response.ErrorResponse(c, customErr.Code)
+		} else {
+			response.ErrorResponse(c, response.ErrCodeInternalServerError)
+		}
+		return
+	}
+
+	// Trả về phản hồi thành công
+	response.SuccessResponse(c, response.ErrCodeSuccess, resp)
+}

@@ -18,7 +18,7 @@ func AuthRouter(r *gin.Engine, db *gorm.DB) {
 
 	v1 := r.Group("/v1/auth")
 	{
-		// v1.POST("/login", authController.Login)
+		v1.POST("/login", authController.Login)
 		v1.POST("/register", authController.Register)
 	}
 }

@@ -63,7 +63,15 @@ func (u *userDataAccessorImpl) DeleteUser(ctx context.Context, id uint) error {
 
 // GetUserByEmail implements UserDataAccessor.
 func (u *userDataAccessorImpl) GetUserByEmail(ctx context.Context, email string) (*User, error) {
-	panic("unimplemented")
+	var user User
+	err := u.db.WithContext(ctx).Where("email = ?", email).First(&user).Error
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, nil
+		}
+		return nil, err 
+	}
+	return &user, nil
 }
 
 // UserExist implements UserDataAccessor.

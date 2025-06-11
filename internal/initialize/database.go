@@ -1,6 +1,7 @@
 package initialize
 
 import (
+	config "Gober/configs"
 	"Gober/database"
 	"fmt"
 	"log"
@@ -13,12 +14,7 @@ import (
 func Init() *gorm.DB {
 
 	// Tải cấu hình từ tệp config.yaml
-	cfg, err := LoadConfig()
-
-	if err != nil {
-		fmt.Printf("Lỗi khi tải cấu hình: %v\n", err)
-		return nil
-	}
+	cfg := config.GetConfig()
 
 	// Khởi tạo kết nối đến cơ sở dữ liệu
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local",

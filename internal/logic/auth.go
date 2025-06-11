@@ -2,9 +2,14 @@ package logic
 
 import (
 	"Gober/common/response"
+	config "Gober/configs"
 	"Gober/internal/database"
+	"Gober/internal/utils"
+
 	"context"
-	"regexp"
+	"time"
+
+	"github.com/golang-jwt/jwt/v5"
 )
 
 type RegisterRequest struct {
@@ -32,7 +37,7 @@ type UserResponse struct {
 
 type AuthLogic interface {
 	Register(ctx context.Context, req *RegisterRequest) (*UserResponse, error)
-	Login(ctx context.Context, req *LoginRequest) (*UserResponse, error)
+	Login(ctx context.Context, req *LoginRequest) (string, error)
 	GetUserByID(ctx context.Context, id uint) (*UserResponse, error)
 }
 
@@ -41,30 +46,50 @@ type authLogicImpl struct {
 	hashLogic        Hash
 }
 
-// validate phone
-func validatePhone(phone string) bool {
-	pattern := `^0[0-9]{9}$`
-
-	// Biên dịch regex
-	re, err := regexp.Compile(pattern)
-	if err != nil {
-		return false
-	}
-
-	// Kiểm tra số điện thoại
-	return re.MatchString(phone)
-}
-
-
-
 // GetUserByID implements UserLogic.
 func (u *authLogicImpl) GetUserByID(ctx context.Context, id uint) (*UserResponse, error) {
 	panic("unimplemented")
 }
 
 // Login implements UserLogic.
-func (u *authLogicImpl) Login(ctx context.Context, req *LoginRequest) (*UserResponse, error) {
-	panic("unimplemented")
+func (u *authLogicImpl) Login(ctx context.Context, req *LoginRequest) (string, error) {
+	// check user exist
+	user, err := u.userDataAccessor.GetUserByEmail(ctx, req.Email)
+	if err != nil {
+		return "", response.NewCustomError(response.ErrCodeInternalServerError)
+	}
+
+	if user == nil {
+		return "", response.NewCustomError(response.ErrCodeNotFound)
+	}
+
+	// check password
+	isValidPassword, err := u.hashLogic.IsHashEqual(ctx, req.Password, user.Password)
+	if err != nil {
+		return "", response.NewCustomError(response.ErrCodeInternalServerError)
+	}
+
+	if !isValidPassword {
+		return "", response.NewCustomError(response.ErrCodeNotMatched)
+	}
+
+	cfg := config.GetConfig()
+
+	// generate token
+	claims := jwt.MapClaims{
+		"id":   user.ID,
+		"role": user.Role,
+		"exp":  time.Now().Add(time.Hour * 168).Unix(),
+	}
+
+	token, err := utils.GenerateJWT(claims, jwt.SigningMethodHS256, cfg.Security.SecretKey)
+
+	if err != nil {
+		return "", response.NewCustomError(response.ErrCodeInternalServerError)
+	}
+
+	return token, nil
+	
 }
 
 // Register implements UserLogic.
