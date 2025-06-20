@@ -43,15 +43,21 @@ func InitDB(cfg *Config) (*gorm.DB, error) {
 		return nil, fmt.Errorf("failed to connect database: %w", err)
 	}
 
-	sqlDB, err := DB.DB()
-	if err != nil {
-		return nil, fmt.Errorf("failed to get generic database object: %w", err)
-	}
+	// auto-migrate các model
+	// err = DB.AutoMigrate(&User{}, &Product{}, &Order{}) // Thêm các model của bạn vào đây
+	// if err != nil {
+	// 	return nil, fmt.Errorf("failed to auto migrate: %w", err)
+	// }
+
+	// sqlDB, err := DB.DB()
+	// if err != nil {
+	// 	return nil, fmt.Errorf("failed to get generic database object: %w", err)
+	// }
 
 	// Cấu hình connection pool
-	sqlDB.SetMaxIdleConns(10)
-	sqlDB.SetMaxOpenConns(100)
-	sqlDB.SetConnMaxLifetime(time.Hour)
+	// sqlDB.SetMaxIdleConns(10)
+	// sqlDB.SetMaxOpenConns(100)
+	// sqlDB.SetConnMaxLifetime(time.Hour)
 
 	log.Println("Database connection established successfully.")
 	return DB, nil

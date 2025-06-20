@@ -58,6 +58,7 @@ func LoadConfig() (config Config, err error) {
         return Config{}, fmt.Errorf("failed to read config file: %w", err)
     }
 
+    // Ánh xạ dữ liệu YAML vào struct
     if err := viper.Unmarshal(&config); err != nil {
         return Config{}, fmt.Errorf("unable to decode config into struct: %w", err)
     }
