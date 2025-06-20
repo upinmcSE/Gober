@@ -4,6 +4,8 @@ import "Gober/internal/initialize"
 
 func main() {
 	// Chạy ứng dụng
-	initialize.Run()
+	r, port := initialize.Run()
+
+	r.Run(":" + port)
 }
 
