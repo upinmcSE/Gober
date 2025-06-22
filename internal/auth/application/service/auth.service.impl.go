@@ -7,11 +7,15 @@ import (
 	hlerDto "Gober/internal/auth/handler/dto"
 	"context"
 	"fmt"
+	"time"
+
+	"github.com/golang-jwt/jwt/v5"
 )
 
 type authService struct {
 	authRepo authRepo.AuthRepository
 	hasdService HashService
+	tokenService TokenService
 }
 
 // Create implements AuthService.
@@ -48,15 +52,21 @@ func (a *authService) Create(ctx context.Context, account appDto.AccountAppDTO) 
 // Login implements AuthService.
 func (a *authService) Login(ctx context.Context, login hlerDto.AccountLoginReq) (hlerDto.AccountLoginRes, error) {
 	// 1. check email in dbs
+
 	account, err := a.authRepo.EmailExists(ctx, login.Email)
 	if err != nil {
 		return hlerDto.AccountLoginRes{}, err
 	}
 
+
+	if account == nil {
+		return hlerDto.AccountLoginRes{}, fmt.Errorf("email not found")
+	}
+
 	// 2. compare pass
 	isEqual, err := a.hasdService.IsHashEqual(ctx, login.Password, account.Password)
 	if err != nil{
-		return hlerDto.AccountLoginRes{}, err
+		return hlerDto.AccountLoginRes{}, fmt.Errorf("failed to compare password: %w", err)
 	}
 
 	if !isEqual {
@@ -64,19 +74,46 @@ func (a *authService) Login(ctx context.Context, login hlerDto.AccountLoginReq) 
 	}
 
 	// 3. add at vs rt
+	claimsAT := jwt.MapClaims{
+		"id":   account.ID,
+		"role": account.Role,
+		"exp":  time.Now().Add(time.Hour * 24).Unix(), // 1 day
+	}
 
+	claimsRT := jwt.MapClaims{
+		"id":   account.ID,
+		"role": account.Role,
+		"exp":  time.Now().Add(time.Hour * 720).Unix(), // 30 days
+	}
+
+	accessToken, err := a.tokenService.GenerateToken(claimsAT)
+	if err != nil {
+		return hlerDto.AccountLoginRes{}, fmt.Errorf("failed to create access token: %w", err)
+	}
+
+	refreshToken, err := a.tokenService.GenerateToken(claimsRT)
+	if err != nil {
+		return hlerDto.AccountLoginRes{}, fmt.Errorf("failed to create refresh token: %w", err)
+	}
+
+	// 4. return
 	return hlerDto.AccountLoginRes{
-		Token:        "",
-		RefreshToken: "",
+		Token:        accessToken,
+		RefreshToken: refreshToken,
 		Id:    account.ID,
 		Email: account.Email,
 		Role:  string(account.Role),
 	}, nil
 }
 
-func NewAuthService(authRepo authRepo.AuthRepository, hashashService HashService) AuthService {
+func NewAuthService(
+	authRepo authRepo.AuthRepository, 
+	hashashService HashService,
+	tokenService TokenService,
+	) AuthService {
 	return &authService{
 		authRepo: authRepo,
 		hasdService: hashashService,
+		tokenService: tokenService,
 	}
 }

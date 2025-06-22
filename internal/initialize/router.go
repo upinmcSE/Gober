@@ -1,13 +1,17 @@
 package initialize
 
 import (
+	"Gober/configs"
+	di "Gober/internal/auth"
+	"Gober/internal/auth/handler/http"
+	"Gober/internal/middlewares"
 	"Gober/pkg/response"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
-func InitRouter(db *gorm.DB) *gin.Engine {
+func InitRouter(db *gorm.DB, config *configs.Config) *gin.Engine {
 	// Khởi tạo Gin Engine
 	// var r *gin.Engine
 	// if gin.Mode() == gin.ReleaseMode {
@@ -19,11 +23,11 @@ func InitRouter(db *gorm.DB) *gin.Engine {
 	r := gin.New()
 
 	// middlewares
-	//r.Use(middleware.CORS) // cross
-	//r.Use(middleware.ValidatorMiddleware())
+	r.Use(middlewares.CORS) // cross
+	r.Use(middlewares.ValidatorMiddleware())
+
 	// r.Use() // logging
 	// r.Use() // limiter global
-	// r.Use(middlewares.Validator())
 
 	r.GET("/ping/100", func(ctx *gin.Context) {
 
@@ -35,10 +39,10 @@ func InitRouter(db *gorm.DB) *gin.Engine {
 	// }))
 
 	// === Đăng ký routes theo module
-	//v1 := r.Group("/v1/2025")
+	v1 := r.Group("/v1/2025")
 
-	//authHandler := initialize.InitAuth(db)
-	//http.RegisterAuthRoutes(v1, authHandler)
+	authHandler := di.InitAuth(db)
+	http.RegisterAuthRoutes(v1, authHandler)
 
 	// userHandler := initialize.InitUser(db)
 

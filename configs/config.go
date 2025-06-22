@@ -1,4 +1,4 @@
-package initialize
+package configs
 
 import (
 	"fmt"
@@ -62,6 +62,8 @@ func LoadConfig() (config Config, err error) {
     if err := viper.Unmarshal(&config); err != nil {
         return Config{}, fmt.Errorf("unable to decode config into struct: %w", err)
     }
+    // Lưu cấu hình vào biến toàn cục
+    ConfigInstance = &config
 
     return config, nil
 }

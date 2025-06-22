@@ -32,16 +32,6 @@ func ErrorResponse(c *gin.Context, code int, message string, err interface{}) {
 
 type HandlerFunc func(ctx *gin.Context) (res interface{}, err error)
 
-// func Wrap(handler HandlerFunc) func(c *gin.Context) {
-// 	return func(ctx *gin.Context) {
-// 		res, err := handler(ctx)
-// 		if err != nil {
-// 			ErrorResponse(ctx, http.StatusInternalServerError, "Internal Server Error", err)
-// 			return
-// 		}
-// 		SuccessResponse(ctx, res)
-// 	}
-// }
 
 func Wrap(handler HandlerFunc) func(c *gin.Context) {
 	return func(ctx *gin.Context) {

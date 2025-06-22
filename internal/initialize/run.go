@@ -1,6 +1,7 @@
 package initialize
 
 import (
+	"Gober/configs"
 	"log"
 
 	"github.com/gin-gonic/gin"
@@ -8,7 +9,7 @@ import (
 
 func Run() (*gin.Engine, string) {
 	// 1> Read config -> environment variables
-	config, err := LoadConfig()
+	config, err := configs.LoadConfig()
 	if err != nil {
 		log.Fatalf("Could not load config: %v", err)
 	}
@@ -18,7 +19,7 @@ func Run() (*gin.Engine, string) {
 		log.Fatalf("Could not initialize database: %v", err)
 	}
 	// 3> Initialize router
-	r := InitRouter(db)
+	r := InitRouter(db, &config)
 
 	// 4> Initialize other services if needed (e.g., cache, message queue, etc.)
 	

@@ -1,6 +1,8 @@
 package initialize
 
 import (
+	"Gober/configs"
+	"Gober/internal/auth/domain/model"
 	"fmt"
 	"log"
 	"os"
@@ -15,7 +17,7 @@ import (
 var DB *gorm.DB // Biến global để chứa instance DB
 
 // InitDB khởi tạo kết nối đến MySQL và trả về GORM DB instance
-func InitDB(cfg *Config) (*gorm.DB, error) {
+func InitDB(cfg *configs.Config) (*gorm.DB, error) {
 
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
 		cfg.Database.User, cfg.Database.Password, cfg.Database.Host, cfg.Database.Port, cfg.Database.DbName)
@@ -44,10 +46,10 @@ func InitDB(cfg *Config) (*gorm.DB, error) {
 	}
 
 	// auto-migrate các model
-	// err = DB.AutoMigrate(&User{}, &Product{}, &Order{}) // Thêm các model của bạn vào đây
-	// if err != nil {
-	// 	return nil, fmt.Errorf("failed to auto migrate: %w", err)
-	// }
+	err = DB.AutoMigrate(&model.Account{}) // Thêm các model của bạn vào đây
+	if err != nil {
+		return nil, fmt.Errorf("failed to auto migrate: %w", err)
+	}
 
 	// sqlDB, err := DB.DB()
 	// if err != nil {
