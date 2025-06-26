@@ -103,6 +103,8 @@ func (a *authService) Login(ctx context.Context, login appDto.AccountAppDTO) (ap
 		Id:           account.ID,
 		Email:        account.Email,
 		Role:         string(account.Role),
+		CreatedAt:    account.CreatedAt.Format(time.RFC3339),
+		UpdatedAt:    account.UpdatedAt.Format(time.RFC3339),
 	}, nil
 }
 

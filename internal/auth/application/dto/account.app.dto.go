@@ -11,4 +11,6 @@ type AccountAppLoginDTO struct {
 	Id           uint   `json:"id"`
 	Email        string `json:"email"`
 	Role         string `json:"role"`
+	CreatedAt    string `json:"createdAt"`
+	UpdatedAt    string `json:"updatedAt"`
 }

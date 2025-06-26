@@ -1,11 +1,15 @@
-import React, { useState } from 'react';
+import { userService } from '@/services/user';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useEffect, useState } from 'react';
+import { router } from 'expo-router';
+import { User } from '@/types/user';
 
 interface AuthContextProps {
   isLoggedIn: boolean;
   isLoadingAuth: boolean;
-  authenticate: (email: string, password: string) => Promise<void>;
+  authenticate: (authMode: "login" | "register", email: string, password: string) => Promise<void>;
   logout: VoidFunction;
-  setIsLoadingAuth: React.Dispatch<React.SetStateAction<boolean>>;
+  user: User | null;
 }
 
 const AuthContext = React.createContext({} as AuthContextProps);
@@ -17,13 +21,58 @@ export function useAuth() {
 export function AuthenticationProvider({ children }: React.PropsWithChildren) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoadingAuth, setIsLoadingAuth] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
 
-  async function authenticate(email: string, password: string) {
-    setIsLoggedIn(true);
+  useEffect(() => {
+    async function checkIfLoggedIn() {
+      const token = await AsyncStorage.getItem('token');
+      const user = await AsyncStorage.getItem('user');
+
+      console.log("Checking if user is logged in", { token, user });
+
+      if (token && user) {
+        setIsLoggedIn(true);
+        setUser(JSON.parse(user));
+        // Redirect to authed route
+        router.replace('/(authed)/(tabs)/settings');
+      }
+    }
+
+    checkIfLoggedIn();
+  }, []);
+
+  async function authenticate(authMode: "login" | "register", email: string, password: string) {
+    console.log("but but")
+    try {
+      setIsLoadingAuth(true);
+
+      const response = await userService[authMode](email, password);
+      console.log("Authentication response:", response);
+
+      if (response) {
+        setIsLoggedIn(true);
+
+        await AsyncStorage.setItem('token', response.data.token);
+        await AsyncStorage.setItem('user', JSON.stringify(response.data.user));
+
+        setUser(response.data.user);
+
+        router.replace("/(authed)/(tabs)/settings");
+      }
+    } catch (error) {
+      console.error("Authentication error:", error);
+      setIsLoggedIn(false);
+    } finally {
+      setIsLoadingAuth(false);
+    }
   }
 
-  function logout() {
+  async function logout() {
     setIsLoggedIn(false);
+    setUser(null);
+
+    await AsyncStorage.removeItem('token');
+    await AsyncStorage.removeItem('user');
   }
 
   return (
@@ -33,7 +82,7 @@ export function AuthenticationProvider({ children }: React.PropsWithChildren) {
         logout,
         isLoggedIn,
         isLoadingAuth,
-        setIsLoadingAuth,
+        user
       } }>
       { children }
     </AuthContext.Provider>

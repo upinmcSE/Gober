@@ -23,7 +23,7 @@ func InitRouter(db *gorm.DB, config *configs.Config) *gin.Engine {
 	r := gin.Default() // Khởi tạo Gin Engine với logging và recovery middleware
 
 	// middlewares
-	r.Use(middlewares.CORS)
+	// r.Use(middlewares.CORS)
 	r.Use(middlewares.ValidatorMiddleware())
 	r.Use(middlewares.ApiKeyMiddleware(config.Server.ApiKey)) // Middleware kiểm tra API Key
 

@@ -87,12 +87,19 @@ func (ah *AuthHandler) LoginUser(ctx *gin.Context) (res interface{}, err error) 
 		return nil, response.NewAPIError(http.StatusOK, "Login failed", err.Error())
 	}
 	// Convert appDto to hlerDto
+
+	userInfo := hlerDto.UserInfo{
+		Id:        serviceResult.Id,
+		Email:     serviceResult.Email,
+		Role:      serviceResult.Role,
+		CreatedAt: serviceResult.CreatedAt,
+		UpdatedAt: serviceResult.UpdatedAt,
+	}
+
 	handlerResult := hlerDto.AccountLoginRes{
 		Token:        serviceResult.Token,
 		RefreshToken: serviceResult.RefreshToken,
-		Id:           serviceResult.Id,
-		Email:        serviceResult.Email,
-		Role:         serviceResult.Role,
+		User:         userInfo,
 	}
 
 	return handlerResult, nil
