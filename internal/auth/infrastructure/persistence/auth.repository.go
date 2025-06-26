@@ -36,21 +36,6 @@ func (ar *authRepository) Create(ctx context.Context, account *model.Account) (*
 	return account, nil
 }
 
-// EmailExists implements repository.AuthRepository.
-func (a *authRepository) EmailExists(ctx context.Context, email string) (*model.Account, error) {
-	var account model.Account
-	result := a.db.WithContext(ctx).Where("email = ?", email).First(&account)
-
-	if result.Error != nil {
-		if result.Error == gorm.ErrRecordNotFound {
-			return nil, nil // Email does not exist
-		}
-		return nil, fmt.Errorf("failed to check email existence: %w", result.Error)
-	}
-
-	return &account, nil
-}
-
 func NewAuthRepository(db *gorm.DB) repository.AuthRepository {
 	return &authRepository{db: db}
 }

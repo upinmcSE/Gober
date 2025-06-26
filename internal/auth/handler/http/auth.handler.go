@@ -6,7 +6,6 @@ import (
 	hlerDto "Gober/internal/auth/handler/dto"
 	"Gober/pkg/response"
 	"Gober/utils"
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -23,13 +22,14 @@ func NewAuthHandler(service service.AuthService) *AuthHandler {
 
 
 func (ah *AuthHandler) RegisterUser(ctx *gin.Context) (res interface{}, err error) {
-	fmt.Println("---> RegisterUser")
-
 	var req hlerDto.AccountRegisterReq
+
+	// 1: Parse JSON → struct
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		return nil, response.NewAPIError(http.StatusOK, "Invalid request", err.Error())
 	}
 
+	// 2: Validate business rules
 	validation, exists := ctx.Get("validation")
 	if !exists {
 		return nil, response.NewAPIError(http.StatusOK, "Invalid request", "Validation not found in context")
@@ -39,27 +39,34 @@ func (ah *AuthHandler) RegisterUser(ctx *gin.Context) (res interface{}, err erro
 		return nil, apiErr
 	}
 
-	// Create account -> dto application
+	// 3: Create account -> dto application
 	account := appDto.AccountAppDTO{
 		Email:    req.Email,
 		Password: req.Password,
 	}
 
+	// 4: Gọi service to create account
 	accountId, err := ah.service.Create(ctx, account)
 	if err != nil {
 		return nil, response.NewAPIError(http.StatusOK, "Registration failed", err.Error())
 	}
 
-	return accountId, nil
+	// 5: Convert to handler dto
+	handlerResult := hlerDto.AccountRegisterRes{
+		AccountID: accountId,
+		Message:   "Account created successfully",
+	}
+
+	return handlerResult, nil
 }
 
 func (ah *AuthHandler) LoginUser(ctx *gin.Context) (res interface{}, err error) {
-	fmt.Println("---> LoginUser")
-
 	var req hlerDto.AccountLoginReq
+
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		return nil, response.NewAPIError(http.StatusOK, "Invalid request", err.Error())
 	}
+
 	validation, exists := ctx.Get("validation")
 	if !exists {
 		return nil, response.NewAPIError(http.StatusOK, "Invalid request", "Validation not found in context")
@@ -69,10 +76,24 @@ func (ah *AuthHandler) LoginUser(ctx *gin.Context) (res interface{}, err error) 
 		return nil, apiErr
 	}
 
-	accountLoginRes, err := ah.service.Login(ctx, req)
+	// Convert hlerDto to appDto
+	accountAppDTO := appDto.AccountAppDTO{
+		Email:    req.Email,
+		Password: req.Password,
+	}
+
+	serviceResult, err := ah.service.Login(ctx, accountAppDTO)
 	if err != nil {
 		return nil, response.NewAPIError(http.StatusOK, "Login failed", err.Error())
 	}
+	// Convert appDto to hlerDto
+	handlerResult := hlerDto.AccountLoginRes{
+		Token:        serviceResult.Token,
+		RefreshToken: serviceResult.RefreshToken,
+		Id:           serviceResult.Id,
+		Email:        serviceResult.Email,
+		Role:         serviceResult.Role,
+	}
 
-	return accountLoginRes, nil
+	return handlerResult, nil
 }

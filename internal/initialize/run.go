@@ -13,11 +13,13 @@ func Run() (*gin.Engine, string) {
 	if err != nil {
 		log.Fatalf("Could not load config: %v", err)
 	}
+
 	// 2> Initialize database connection
 	db, err := InitDB(&config)
 	if err != nil {
 		log.Fatalf("Could not initialize database: %v", err)
 	}
+	
 	// 3> Initialize router
 	r := InitRouter(db, &config)
 

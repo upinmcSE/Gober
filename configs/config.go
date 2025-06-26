@@ -21,6 +21,7 @@ type Config struct {
 type ServerConfig struct {
     Host string
     Port string
+    ApiKey string 
 }
 
 type SecurityConfig struct {
@@ -43,15 +44,6 @@ func LoadConfig() (config Config, err error) {
     viper.SetConfigType("yaml")
     viper.AddConfigPath(".")       
 
-    // Thiết lập giá trị mặc định
-    viper.SetDefault("server.host", "127.0.0.1")
-    viper.SetDefault("server.port", "8080")
-    viper.SetDefault("database.user", "12345678")
-    viper.SetDefault("database.password", "12345678")
-    viper.SetDefault("database.host", "localhost")
-    viper.SetDefault("database.port", "3306")
-    viper.SetDefault("database.dbname", "gober")
-    viper.SetDefault("security.jwt.secret", "12345678")
 
     // Đọc tệp cấu hình
     if err := viper.ReadInConfig(); err != nil {

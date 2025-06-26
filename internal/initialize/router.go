@@ -2,8 +2,8 @@ package initialize
 
 import (
 	"Gober/configs"
-	di "Gober/internal/auth"
 	"Gober/internal/auth/handler/http"
+	di "Gober/internal/initialize/wire"
 	"Gober/internal/middlewares"
 	"Gober/pkg/response"
 
@@ -20,11 +20,12 @@ func InitRouter(db *gorm.DB, config *configs.Config) *gin.Engine {
 	// 	r = gin.Default()
 	// }
 
-	r := gin.New()
+	r := gin.Default() // Khởi tạo Gin Engine với logging và recovery middleware
 
 	// middlewares
-	r.Use(middlewares.CORS) // cross
+	r.Use(middlewares.CORS)
 	r.Use(middlewares.ValidatorMiddleware())
+	r.Use(middlewares.ApiKeyMiddleware(config.Server.ApiKey)) // Middleware kiểm tra API Key
 
 	// r.Use() // logging
 	// r.Use() // limiter global

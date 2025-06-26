@@ -4,10 +4,9 @@ import (
 	"context"
 
 	appDto "Gober/internal/auth/application/dto"
-	hlerDto "Gober/internal/auth/handler/dto"
 )
 
 type AuthService interface {
-	Login(ctx context.Context, login hlerDto.AccountLoginReq) (hlerDto.AccountLoginRes, error)
+	Login(ctx context.Context, login appDto.AccountAppDTO) (appDto.AccountAppLoginDTO, error)
 	Create(ctx context.Context, account appDto.AccountAppDTO) (uint, error)
 }

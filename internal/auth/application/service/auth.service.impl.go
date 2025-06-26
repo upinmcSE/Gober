@@ -4,7 +4,7 @@ import (
 	appDto "Gober/internal/auth/application/dto"
 	"Gober/internal/auth/domain/model"
 	authRepo "Gober/internal/auth/domain/repository"
-	hlerDto "Gober/internal/auth/handler/dto"
+	userRepo "Gober/internal/user/domain/repository"
 	"context"
 	"fmt"
 	"time"
@@ -14,6 +14,7 @@ import (
 
 type authService struct {
 	authRepo authRepo.AuthRepository
+	userRepo userRepo.UserRepository
 	hasdService HashService
 	tokenService TokenService
 }
@@ -21,7 +22,7 @@ type authService struct {
 // Create implements AuthService.
 func (a *authService) Create(ctx context.Context, account appDto.AccountAppDTO) (uint, error) {
 	// 1. check email in dbs
-	existingAccount, err := a.authRepo.EmailExists(ctx, account.Email)
+	existingAccount, err := a.userRepo.EmailExists(ctx, account.Email)
 	if err != nil {
 		return 0, err
 	}
@@ -50,27 +51,26 @@ func (a *authService) Create(ctx context.Context, account appDto.AccountAppDTO) 
 }
 
 // Login implements AuthService.
-func (a *authService) Login(ctx context.Context, login hlerDto.AccountLoginReq) (hlerDto.AccountLoginRes, error) {
+func (a *authService) Login(ctx context.Context, login appDto.AccountAppDTO) (appDto.AccountAppLoginDTO, error) {
 	// 1. check email in dbs
-
-	account, err := a.authRepo.EmailExists(ctx, login.Email)
+	account, err := a.userRepo.EmailExists(ctx, login.Email)
 	if err != nil {
-		return hlerDto.AccountLoginRes{}, err
+		return appDto.AccountAppLoginDTO{}, fmt.Errorf("failed to check email: %w", err)
 	}
 
 
 	if account == nil {
-		return hlerDto.AccountLoginRes{}, fmt.Errorf("email not found")
+		return appDto.AccountAppLoginDTO{}, fmt.Errorf("email not found")
 	}
 
 	// 2. compare pass
 	isEqual, err := a.hasdService.IsHashEqual(ctx, login.Password, account.Password)
 	if err != nil{
-		return hlerDto.AccountLoginRes{}, fmt.Errorf("failed to compare password: %w", err)
+		return appDto.AccountAppLoginDTO{}, fmt.Errorf("failed to compare password: %w", err)
 	}
 
 	if !isEqual {
-		return hlerDto.AccountLoginRes{}, fmt.Errorf("password is not match")
+		return appDto.AccountAppLoginDTO{}, fmt.Errorf("invalid password")
 	}
 
 	// 3. add at vs rt
@@ -88,31 +88,33 @@ func (a *authService) Login(ctx context.Context, login hlerDto.AccountLoginReq) 
 
 	accessToken, err := a.tokenService.GenerateToken(claimsAT)
 	if err != nil {
-		return hlerDto.AccountLoginRes{}, fmt.Errorf("failed to create access token: %w", err)
+		return appDto.AccountAppLoginDTO{}, fmt.Errorf("failed to create access token: %w", err)
 	}
 
 	refreshToken, err := a.tokenService.GenerateToken(claimsRT)
 	if err != nil {
-		return hlerDto.AccountLoginRes{}, fmt.Errorf("failed to create refresh token: %w", err)
+		return appDto.AccountAppLoginDTO{}, fmt.Errorf("failed to create refresh token: %w", err)
 	}
 
 	// 4. return
-	return hlerDto.AccountLoginRes{
+	return appDto.AccountAppLoginDTO{
 		Token:        accessToken,
 		RefreshToken: refreshToken,
-		Id:    account.ID,
-		Email: account.Email,
-		Role:  string(account.Role),
+		Id:           account.ID,
+		Email:        account.Email,
+		Role:         string(account.Role),
 	}, nil
 }
 
 func NewAuthService(
 	authRepo authRepo.AuthRepository, 
+	userRepo userRepo.UserRepository,
 	hashashService HashService,
 	tokenService TokenService,
 	) AuthService {
 	return &authService{
 		authRepo: authRepo,
+		userRepo: userRepo,
 		hasdService: hashashService,
 		tokenService: tokenService,
 	}

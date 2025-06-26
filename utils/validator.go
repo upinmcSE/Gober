@@ -16,6 +16,7 @@ func ValidateStruct(data interface{}, validate *validator.Validate) *response.AP
 	}
 
 	validationErrs, ok := err.(validator.ValidationErrors)
+	
 	if !ok {
 		return response.NewAPIError(http.StatusBadRequest, "Validation failed", err.Error())
 	}
