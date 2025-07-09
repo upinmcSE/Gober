@@ -7,17 +7,16 @@ import (
 	"github.com/spf13/viper"
 )
 
-// Biến toàn cục để lưu cấu hình
+
 var ConfigInstance *Config
 
-// Config chứa các giá trị cấu hình
 type Config struct {
     Server   ServerConfig
     Database DatabaseConfig
     Security SecurityConfig
+    Redis    RedisConfig
 }
 
-// ServerConfig chứa cấu hình server
 type ServerConfig struct {
     Host string
     Port string
@@ -26,9 +25,9 @@ type ServerConfig struct {
 
 type SecurityConfig struct {
     SecretKey string
+    Expiration int64
 }
 
-// DatabaseConfig chứa cấu hình database
 type DatabaseConfig struct {
     User     string
     Password string
@@ -37,9 +36,15 @@ type DatabaseConfig struct {
     DbName   string
 }
 
-// LoadConfig khởi tạo và đọc cấu hình từ Viper
+type RedisConfig struct {
+    Addr     string
+	Username string
+	Password string
+	DB       int
+}
+
+
 func LoadConfig() (config Config, err error) {
-    // Thiết lập tên tệp cấu hình và định dạng
     viper.SetConfigName("config") 
     viper.SetConfigType("yaml")
     viper.AddConfigPath(".")       
@@ -54,6 +59,7 @@ func LoadConfig() (config Config, err error) {
     if err := viper.Unmarshal(&config); err != nil {
         return Config{}, fmt.Errorf("unable to decode config into struct: %w", err)
     }
+    
     // Lưu cấu hình vào biến toàn cục
     ConfigInstance = &config
 

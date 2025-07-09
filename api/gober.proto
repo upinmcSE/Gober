@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package api;
+
+option go_package = "/grpc/gober";
+
+service GoberService {
+    rpc CreateAccount(CreateAccountRequest) returns (CreateAccountResponse);
+    rpc CreateSession(CreateSessionRequest) returns (CreateSessionResponse);
+    rpc GetAccount(GetAccountRequest) returns (GetAccountResponse);
+}
+
+message Account {
+    uint64 account_id = 1;
+    string email = 2;
+    string role = 3;
+    string created_at = 4;
+    string updated_at = 5;
+}
+
+
+message CreateAccountRequest {
+    string email = 1;
+    string password = 2;
+}
+
+message CreateAccountResponse {
+    uint64 account_id = 1;
+}
+
+message CreateSessionRequest {
+    string email = 1;
+    string password = 2;
+}
+
+message CreateSessionResponse {
+    Account of_account = 1;
+    string token = 2;
+}
+
+message GetAccountRequest {
+    uint64 account_id = 1;
+}
+
+message GetAccountResponse {
+    Account of_account = 1;
+}
+
+
+//protoc --go_out=./internal/generated --go-grpc_out=./internal/generated api/gober.proto
