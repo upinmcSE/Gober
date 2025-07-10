@@ -4,20 +4,24 @@ import (
 	"Gober/configs"
 	"Gober/internal/repo/mysql"
 	"errors"
+	"fmt"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 )
 
 type Claims struct {
-    Email string `json:"email"`
-    jwt.RegisteredClaims
+	Email string `json:"email"`
+	jwt.RegisteredClaims
 }
 
-type tokenService struct {}
+type tokenService struct{}
 
 type TokenService interface {
 	GenerateToken(claims *mysql.Account) (string, error)
-	ValidateToken(token string) (*jwt.Token, error)
+	ValidateToken(token string) (bool, error)
 	ExtractEmail(token string) (string, error)
 }
 
@@ -32,49 +36,59 @@ func (t *tokenService) GenerateToken(account *mysql.Account) (string, error) {
 	claimsAT := jwt.MapClaims{
 		"id":   account.ID,
 		"role": account.Role,
-		"exp":  config.Security.Expiration, // 1 hour in seconds
+		"exp":  time.Now().Add(time.Duration(config.Security.Expiration) * time.Second).Unix(), // 1 hour in seconds
 	}
 
-    token := jwt.NewWithClaims(jwt.SigningMethodHS256, claimsAT)
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claimsAT)
 
-    return token.SignedString([]byte(config.Security.SecretKey))
+	return token.SignedString([]byte(config.Security.SecretKey))
 }
 
 // ValidateToken implements TokenService.
-func (t *tokenService) ValidateToken(tokenString string) (*jwt.Token, error) {
-
+func (t *tokenService) ValidateToken(tokenString string) (bool, error) {
 	config := configs.GetConfig()
 
 	if config == nil {
-		return nil, errors.New("configuration not found")
+		return false, errors.New("configuration not found")
 	}
 
 	token, err := jwt.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (interface{}, error) {
-        return []byte(config.Security.SecretKey), nil
-    })
+		return []byte(config.Security.SecretKey), nil
+	})
 
-    if err != nil || !token.Valid {
-        return nil, errors.New("invalid or expired token")
-    }
+	if claims, ok := token.Claims.(*Claims); ok {
+		fmt.Println("Token exp:", claims.ExpiresAt)
+	}
 
-    return token, nil
+	if err != nil || !token.Valid {
+		return false, status.Error(codes.Unauthenticated, "Token is invalid")
+	}
+
+	return true, nil
 }
 
 // ExtractEmail implements TokenService.
 func (t *tokenService) ExtractEmail(tokenString string) (string, error) {
-	token, err := t.ValidateToken(tokenString)
-    if err != nil {
-        return "", err
-    }
+	config := configs.GetConfig()
+	if config == nil {
+		return "", status.Error(codes.Internal, "Lỗi server")
+	}
 
-    claims, ok := token.Claims.(*Claims)
-    if !ok {
-        return "", errors.New("cannot extract claims")
-    }
+	token, err := jwt.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (interface{}, error) {
+		return []byte(config.Security.SecretKey), nil
+	})
+	if !token.Valid || err != nil {
+		return "", status.Error(codes.Unauthenticated, "Token is invalid")
+	}
 
-    return claims.Email, nil
+	claims, ok := token.Claims.(*Claims)
+	if !ok {
+		return "", status.Error(codes.Internal, "Lỗi server")
+	}
+
+	return claims.Email, nil
 }
 
-func NewTokenService(secretKey string) TokenService {
+func NewTokenService() TokenService {
 	return &tokenService{}
 }

@@ -46,7 +46,7 @@ func (g grpcServer) StartGRPCServer(wg *sync.WaitGroup) {
 
 	// Initialize service
 	hashService := service.NewHash()
-	tokenService := service.NewTokenService(config.Security.SecretKey)
+	tokenService := service.NewTokenService()
 	accountService := service.NewAccountService(accountRepo, tokenService, hashService)
 
 	// Initialize handler

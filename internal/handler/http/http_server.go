@@ -2,6 +2,8 @@ package http
 
 import (
 	"Gober/internal/generated/grpc/gober"
+	"Gober/internal/middleware"
+	"Gober/pkg/logger"
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc"
 	"log"
@@ -32,9 +34,23 @@ func (h httpServer) StartHTTPServer(wg *sync.WaitGroup) {
 
 	r := gin.Default()
 
-	r.POST("/sessions", createSessionHandler(client))
-	r.POST("/create", createHandler(client))
-	r.GET("/:id", getAccountHandler(client))
+	v1 := r.Group("/api/v1")
+
+	httpLogger := logger.NewLoggerWithPath("../../internal/logs/http.log", "info")
+	rateLimiterLogger := logger.NewLoggerWithPath("../../internal/logs/rate_limiter.log", "warning")
+	v1.Use(
+		middleware.ApikeyMiddleware(),
+		middleware.CORSMiddleware(),
+		middleware.LoggerMiddleware(httpLogger),
+		middleware.RateLimiterMiddleware(rateLimiterLogger),
+	)
+
+	account := v1.Group("/accounts")
+	{
+		account.POST("/sessions", createSessionHandler(client))
+		account.POST("/create", createHandler(client))
+		account.GET("/:id", middleware.AuthMiddleware(), getAccountHandler(client))
+	}
 
 	log.Println("HTTP server listening at :8081")
 	if err := r.Run(":8081"); err != nil {
