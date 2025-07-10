@@ -1,11 +1,11 @@
 import { ApiResponse } from "./api";
 
 export type AuthResponse = ApiResponse<
-    { token: string; refreshToken: string; user: User }
+    { of_account: User; token: string; }
 >;
 
 export type User = {
-    id: number;
+    account_id: number;
     email: string;
     role: string;
 	createdAt: string;

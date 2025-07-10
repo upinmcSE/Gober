@@ -34,7 +34,7 @@ export function AuthenticationProvider({ children }: React.PropsWithChildren) {
         setIsLoggedIn(true);
         setUser(JSON.parse(user));
         // Redirect to authed route
-        router.replace('/(authed)/(tabs)/settings');
+        router.replace('/(authed)/(tabs)/(events)');
       }
     }
 
@@ -42,30 +42,41 @@ export function AuthenticationProvider({ children }: React.PropsWithChildren) {
   }, []);
 
   async function authenticate(authMode: "login" | "register", email: string, password: string) {
-    console.log("but but")
-    try {
-      setIsLoadingAuth(true);
+  console.log("but but");
+  try {
+    setIsLoadingAuth(true);
 
-      const response = await userService[authMode](email, password);
-      console.log("Authentication response:", response);
+    const response = await userService[authMode](email, password);
+    console.log("Authentication response:", response);
 
-      if (response) {
+    
+    const data = response?.data[0];
+
+    if (data) {
+      const token = data.token;
+      const user = data.of_account;
+
+      if (token && user) {
         setIsLoggedIn(true);
+        setUser(user);
 
-        await AsyncStorage.setItem('token', response.data.token);
-        await AsyncStorage.setItem('user', JSON.stringify(response.data.user));
+        await AsyncStorage.setItem('token', token);
+        await AsyncStorage.setItem('user', JSON.stringify(user));
 
-        setUser(response.data.user);
-
-        router.replace("/(authed)/(tabs)/settings");
+        router.replace("/(authed)/(tabs)/(events)");
+      } else {
+        console.error("Missing token or user in response", data);
       }
-    } catch (error) {
-      console.error("Authentication error:", error);
-      setIsLoggedIn(false);
-    } finally {
-      setIsLoadingAuth(false);
+    } else {
+      console.error("No data returned from server");
     }
+  } catch (error) {
+    console.error("Authentication error:", error);
+    setIsLoggedIn(false);
+  } finally {
+    setIsLoadingAuth(false);
   }
+}
 
   async function logout() {
     setIsLoggedIn(false);

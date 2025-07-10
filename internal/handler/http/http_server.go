@@ -4,6 +4,7 @@ import (
 	"Gober/internal/generated/grpc/gober"
 	"Gober/internal/middleware"
 	"Gober/pkg/logger"
+	"Gober/utils/response"
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc"
 	"log"
@@ -34,7 +35,7 @@ func (h httpServer) StartHTTPServer(wg *sync.WaitGroup) {
 
 	r := gin.Default()
 
-	v1 := r.Group("/api/v1")
+	v1 := r.Group("/v1/2025")
 
 	httpLogger := logger.NewLoggerWithPath("../../internal/logs/http.log", "info")
 	rateLimiterLogger := logger.NewLoggerWithPath("../../internal/logs/rate_limiter.log", "warning")
@@ -47,13 +48,13 @@ func (h httpServer) StartHTTPServer(wg *sync.WaitGroup) {
 
 	account := v1.Group("/accounts")
 	{
-		account.POST("/sessions", createSessionHandler(client))
-		account.POST("/create", createHandler(client))
+		account.POST("/login", createSessionHandler(client))
+		account.POST("/register", createHandler(client))
 		account.GET("/:id", middleware.AuthMiddleware(), getAccountHandler(client))
 	}
 
-	log.Println("HTTP server listening at :8081")
-	if err := r.Run(":8081"); err != nil {
+	log.Println("HTTP server listening at :8082")
+	if err := r.Run(":8082"); err != nil {
 		log.Fatalf("Failed to run HTTP server: %v", err)
 	}
 
@@ -63,17 +64,20 @@ func createSessionHandler(client gober.GoberServiceClient) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var req gober.CreateSessionRequest
 		if err := c.ShouldBindJSON(&req); err != nil {
-			c.JSON(400, gin.H{"error": "Invalid request"})
+			response.ResponseError(c, 400, &response.AppError{
+				Message: "Invalid request",
+				Code:    response.ErrCodeBadRequest,
+			})
 			return
 		}
 
 		resp, err := client.CreateSession(c, &req)
 		if err != nil {
-			c.JSON(500, gin.H{"error": err.Error()})
+			response.HandleGrpcError(c, err)
 			return
 		}
 
-		c.JSON(200, resp)
+		response.ResponseSuccess(c, 200, "Session created successfully", resp)
 	}
 }
 
@@ -81,17 +85,20 @@ func createHandler(client gober.GoberServiceClient) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var req gober.CreateAccountRequest
 		if err := c.ShouldBindJSON(&req); err != nil {
-			c.JSON(400, gin.H{"error": "Invalid request"})
+			response.ResponseError(c, 400, &response.AppError{
+				Message: "Invalid request",
+				Code:    response.ErrCodeBadRequest,
+			})
 			return
 		}
 
 		resp, err := client.CreateAccount(c, &req)
 		if err != nil {
-			c.JSON(500, gin.H{"error": err.Error()})
+			response.HandleGrpcError(c, err)
 			return
 		}
 
-		c.JSON(200, resp)
+		response.ResponseSuccess(c, 201, "Account created successfully", resp)
 	}
 }
 
@@ -99,7 +106,10 @@ func getAccountHandler(client gober.GoberServiceClient) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		accountID := c.Param("id")
 		if accountID == "" {
-			c.JSON(400, gin.H{"error": "Account ID is required"})
+			response.ResponseError(c, 400, &response.AppError{
+				Message: "Account ID is required",
+				Code:    response.ErrCodeBadRequest,
+			})
 			return
 		}
 
@@ -108,11 +118,11 @@ func getAccountHandler(client gober.GoberServiceClient) gin.HandlerFunc {
 
 		resp, err := client.GetAccount(c, &gober.GetAccountRequest{AccountId: id})
 		if err != nil {
-			c.JSON(500, gin.H{"error": err.Error()})
+			response.HandleGrpcError(c, err)
 			return
 		}
 
-		c.JSON(200, resp)
+		response.ResponseSuccess(c, 200, "Account retrieved", resp)
 	}
 }
 

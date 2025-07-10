@@ -30,7 +30,7 @@ func (t *tokenService) GenerateToken(account *mysql.Account) (string, error) {
 
 	config := configs.GetConfig()
 	if config == nil {
-		return "", errors.New("configuration not found")
+		return "", status.Error(codes.Internal, "Configuration not found")
 	}
 
 	claimsAT := jwt.MapClaims{
@@ -53,7 +53,7 @@ func (t *tokenService) ValidateToken(tokenString string) (bool, error) {
 	}
 
 	token, err := jwt.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (interface{}, error) {
-		return []byte(config.Security.SecretKey), nil
+		return []byte(config.Security.SecretKey), status.Error(codes.Unauthenticated, "Token is invalid")
 	})
 
 	if claims, ok := token.Claims.(*Claims); ok {

@@ -2,9 +2,9 @@ import { Platform } from "react-native";
 import axios, { AxiosError, AxiosInstance, AxiosResponse } from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const url = Platform.OS === "android" ? "http://192.168.1.12:8080" : "http://localhost:8080";
+const url = "http://192.168.48.230:8082";
 
-const x_api_key = "Ft89HodRC7Sfvy85MfH9xhXPRHiBVqVNCAeQ30rsqv0nxvsxcFhOCZRxgMamERMn"
+const x_api_key = "894f5978-f86b-4b04-9bc0-328e7ac6166e"
 
 const Api: AxiosInstance = axios.create({ baseURL: url + "/v1/2025" });
 
@@ -13,7 +13,7 @@ Api.interceptors.request.use(async config => {
 
     if (token) config.headers.set("Authorization", `Bearer ${token}`);
 
-    if (x_api_key) config.headers.set("x-api-key", x_api_key);
+    if (x_api_key) config.headers.set("X-API-Key", x_api_key);
 
     return config;
 });

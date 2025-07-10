@@ -71,7 +71,7 @@ func (a *accountService) CreateAccount(ctx context.Context, params CreateAccount
 		Password: hashedPassword,
 	})
 	if err != nil {
-		return CreateAccountOutput{}, err
+		return CreateAccountOutput{}, status.Error(codes.Internal, "failed to create account")
 	}
 
 	return CreateAccountOutput{
