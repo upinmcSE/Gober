@@ -8,6 +8,15 @@ service GoberService {
     rpc CreateAccount(CreateAccountRequest) returns (CreateAccountResponse);
     rpc CreateSession(CreateSessionRequest) returns (CreateSessionResponse);
     rpc GetAccount(GetAccountRequest) returns (GetAccountResponse);
+    rpc CreateEvent(CreateEventRequest) returns (CreateEventResponse);
+    rpc UpdateEvent(UpdateEventRequest) returns (UpdateEventResponse);
+    rpc DeleteEvent(DeleteEventRequest) returns (DeleteEventResponse);
+    rpc GetEvent(GetEventRequest) returns (GetEventResponse);
+    rpc GetEvents(ListEventsRequest) returns (ListEventsResponse);
+    rpc CreateTicket(CreateTicketRequest) returns (CreateTicketResponse);
+    rpc UpdateTicket(UpdateTicketRequest) returns (UpdateTicketResponse);
+    rpc GetTicket(GetTicketRequest) returns (GetTicketResponse);
+    rpc GetTickets(ListTicketsRequest) returns (ListTicketsResponse);
 }
 
 message Account {
@@ -16,6 +25,32 @@ message Account {
     string role = 3;
     string created_at = 4;
     string updated_at = 5;
+}
+
+message Event {
+    uint64 event_id = 1;
+    string title = 2;
+    string location = 3;
+    uint64 total_tickets_purchased = 4;
+    uint64 total_tickets_entered = 5;
+    string date = 6;
+    string created_at = 7;
+    string updated_at = 8;
+}
+
+message EventUpdate {
+    string title = 1;
+    string location = 2;
+    string date = 3;
+}
+
+message Ticket {
+    uint64 ticket_id = 1;
+    uint64 event_id = 2;
+    uint64 account_id = 3;
+    bool entered = 5;
+    string created_at = 6;
+    string updated_at = 7;
 }
 
 
@@ -45,6 +80,90 @@ message GetAccountRequest {
 message GetAccountResponse {
     Account of_account = 1;
 }
+
+message CreateEventRequest {
+    EventUpdate event_update = 1;
+}
+
+message CreateEventResponse {
+    Event event = 1;
+}
+
+message UpdateEventRequest {
+    uint64 event_id = 1;
+    EventUpdate event_update = 2;
+}
+
+message UpdateEventResponse {
+    Event event = 1;
+}
+
+message DeleteEventRequest {
+    uint64 event_id = 1;
+}
+
+message DeleteEventResponse {}
+
+message GetEventRequest {
+    uint64 event_id = 1;
+}
+
+message GetEventResponse {
+    Event event = 1;
+}
+
+message ListEventsRequest {
+    uint64 offset = 1;
+    uint64 limit = 2;
+}
+
+message ListEventsResponse {
+    repeated Event events = 1;
+    uint64 total_event_count = 2;
+    bool has_next = 3;
+}
+
+message CreateTicketRequest {
+    uint64 event_id = 1;
+    uint64 account_id = 2;
+}
+
+message CreateTicketResponse {
+    Ticket ticket = 2;
+}
+
+message UpdateTicketRequest {
+    uint64 account_id = 1;
+    uint64 ticket_id = 2;
+}
+
+message UpdateTicketResponse {
+    Ticket ticket = 1;
+}
+
+
+message GetTicketRequest {
+    uint64 account_id = 1;
+    uint64 ticket_id = 2;
+}
+
+message GetTicketResponse {
+    Ticket ticket = 1;
+}
+
+message ListTicketsRequest {
+    uint64 account_id = 1;
+    uint64 offset = 2;
+    uint64 limit = 3;
+}
+
+message ListTicketsResponse {
+    repeated Ticket tickets = 1;
+    uint64 total_ticket_count = 2;
+    bool has_next = 3;
+}
+
+
 
 
 //protoc --go_out=./internal/generated --go-grpc_out=./internal/generated api/gober.proto

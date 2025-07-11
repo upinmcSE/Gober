@@ -97,6 +97,250 @@ func (x *Account) GetUpdatedAt() string {
 	return ""
 }
 
+type Event struct {
+	state                 protoimpl.MessageState `protogen:"open.v1"`
+	EventId               uint64                 `protobuf:"varint,1,opt,name=event_id,json=eventId,proto3" json:"event_id,omitempty"`
+	Title                 string                 `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`
+	Location              string                 `protobuf:"bytes,3,opt,name=location,proto3" json:"location,omitempty"`
+	TotalTicketsPurchased uint64                 `protobuf:"varint,4,opt,name=total_tickets_purchased,json=totalTicketsPurchased,proto3" json:"total_tickets_purchased,omitempty"`
+	TotalTicketsEntered   uint64                 `protobuf:"varint,5,opt,name=total_tickets_entered,json=totalTicketsEntered,proto3" json:"total_tickets_entered,omitempty"`
+	Date                  string                 `protobuf:"bytes,6,opt,name=date,proto3" json:"date,omitempty"`
+	CreatedAt             string                 `protobuf:"bytes,7,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt             string                 `protobuf:"bytes,8,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	unknownFields         protoimpl.UnknownFields
+	sizeCache             protoimpl.SizeCache
+}
+
+func (x *Event) Reset() {
+	*x = Event{}
+	mi := &file_api_gober_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Event) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Event) ProtoMessage() {}
+
+func (x *Event) ProtoReflect() protoreflect.Message {
+	mi := &file_api_gober_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Event.ProtoReflect.Descriptor instead.
+func (*Event) Descriptor() ([]byte, []int) {
+	return file_api_gober_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *Event) GetEventId() uint64 {
+	if x != nil {
+		return x.EventId
+	}
+	return 0
+}
+
+func (x *Event) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
+}
+
+func (x *Event) GetLocation() string {
+	if x != nil {
+		return x.Location
+	}
+	return ""
+}
+
+func (x *Event) GetTotalTicketsPurchased() uint64 {
+	if x != nil {
+		return x.TotalTicketsPurchased
+	}
+	return 0
+}
+
+func (x *Event) GetTotalTicketsEntered() uint64 {
+	if x != nil {
+		return x.TotalTicketsEntered
+	}
+	return 0
+}
+
+func (x *Event) GetDate() string {
+	if x != nil {
+		return x.Date
+	}
+	return ""
+}
+
+func (x *Event) GetCreatedAt() string {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return ""
+}
+
+func (x *Event) GetUpdatedAt() string {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return ""
+}
+
+type EventUpdate struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Title         string                 `protobuf:"bytes,1,opt,name=title,proto3" json:"title,omitempty"`
+	Location      string                 `protobuf:"bytes,2,opt,name=location,proto3" json:"location,omitempty"`
+	Date          string                 `protobuf:"bytes,3,opt,name=date,proto3" json:"date,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *EventUpdate) Reset() {
+	*x = EventUpdate{}
+	mi := &file_api_gober_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *EventUpdate) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*EventUpdate) ProtoMessage() {}
+
+func (x *EventUpdate) ProtoReflect() protoreflect.Message {
+	mi := &file_api_gober_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use EventUpdate.ProtoReflect.Descriptor instead.
+func (*EventUpdate) Descriptor() ([]byte, []int) {
+	return file_api_gober_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *EventUpdate) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
+}
+
+func (x *EventUpdate) GetLocation() string {
+	if x != nil {
+		return x.Location
+	}
+	return ""
+}
+
+func (x *EventUpdate) GetDate() string {
+	if x != nil {
+		return x.Date
+	}
+	return ""
+}
+
+type Ticket struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	TicketId      uint64                 `protobuf:"varint,1,opt,name=ticket_id,json=ticketId,proto3" json:"ticket_id,omitempty"`
+	EventId       uint64                 `protobuf:"varint,2,opt,name=event_id,json=eventId,proto3" json:"event_id,omitempty"`
+	AccountId     uint64                 `protobuf:"varint,3,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
+	Entered       bool                   `protobuf:"varint,5,opt,name=entered,proto3" json:"entered,omitempty"`
+	CreatedAt     string                 `protobuf:"bytes,6,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt     string                 `protobuf:"bytes,7,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Ticket) Reset() {
+	*x = Ticket{}
+	mi := &file_api_gober_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Ticket) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Ticket) ProtoMessage() {}
+
+func (x *Ticket) ProtoReflect() protoreflect.Message {
+	mi := &file_api_gober_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Ticket.ProtoReflect.Descriptor instead.
+func (*Ticket) Descriptor() ([]byte, []int) {
+	return file_api_gober_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *Ticket) GetTicketId() uint64 {
+	if x != nil {
+		return x.TicketId
+	}
+	return 0
+}
+
+func (x *Ticket) GetEventId() uint64 {
+	if x != nil {
+		return x.EventId
+	}
+	return 0
+}
+
+func (x *Ticket) GetAccountId() uint64 {
+	if x != nil {
+		return x.AccountId
+	}
+	return 0
+}
+
+func (x *Ticket) GetEntered() bool {
+	if x != nil {
+		return x.Entered
+	}
+	return false
+}
+
+func (x *Ticket) GetCreatedAt() string {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return ""
+}
+
+func (x *Ticket) GetUpdatedAt() string {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return ""
+}
+
 type CreateAccountRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Email         string                 `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
@@ -107,7 +351,7 @@ type CreateAccountRequest struct {
 
 func (x *CreateAccountRequest) Reset() {
 	*x = CreateAccountRequest{}
-	mi := &file_api_gober_proto_msgTypes[1]
+	mi := &file_api_gober_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -119,7 +363,7 @@ func (x *CreateAccountRequest) String() string {
 func (*CreateAccountRequest) ProtoMessage() {}
 
 func (x *CreateAccountRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_gober_proto_msgTypes[1]
+	mi := &file_api_gober_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -132,7 +376,7 @@ func (x *CreateAccountRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateAccountRequest.ProtoReflect.Descriptor instead.
 func (*CreateAccountRequest) Descriptor() ([]byte, []int) {
-	return file_api_gober_proto_rawDescGZIP(), []int{1}
+	return file_api_gober_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *CreateAccountRequest) GetEmail() string {
@@ -158,7 +402,7 @@ type CreateAccountResponse struct {
 
 func (x *CreateAccountResponse) Reset() {
 	*x = CreateAccountResponse{}
-	mi := &file_api_gober_proto_msgTypes[2]
+	mi := &file_api_gober_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -170,7 +414,7 @@ func (x *CreateAccountResponse) String() string {
 func (*CreateAccountResponse) ProtoMessage() {}
 
 func (x *CreateAccountResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_gober_proto_msgTypes[2]
+	mi := &file_api_gober_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -183,7 +427,7 @@ func (x *CreateAccountResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateAccountResponse.ProtoReflect.Descriptor instead.
 func (*CreateAccountResponse) Descriptor() ([]byte, []int) {
-	return file_api_gober_proto_rawDescGZIP(), []int{2}
+	return file_api_gober_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *CreateAccountResponse) GetAccountId() uint64 {
@@ -203,7 +447,7 @@ type CreateSessionRequest struct {
 
 func (x *CreateSessionRequest) Reset() {
 	*x = CreateSessionRequest{}
-	mi := &file_api_gober_proto_msgTypes[3]
+	mi := &file_api_gober_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -215,7 +459,7 @@ func (x *CreateSessionRequest) String() string {
 func (*CreateSessionRequest) ProtoMessage() {}
 
 func (x *CreateSessionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_gober_proto_msgTypes[3]
+	mi := &file_api_gober_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -228,7 +472,7 @@ func (x *CreateSessionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateSessionRequest.ProtoReflect.Descriptor instead.
 func (*CreateSessionRequest) Descriptor() ([]byte, []int) {
-	return file_api_gober_proto_rawDescGZIP(), []int{3}
+	return file_api_gober_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *CreateSessionRequest) GetEmail() string {
@@ -255,7 +499,7 @@ type CreateSessionResponse struct {
 
 func (x *CreateSessionResponse) Reset() {
 	*x = CreateSessionResponse{}
-	mi := &file_api_gober_proto_msgTypes[4]
+	mi := &file_api_gober_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -267,7 +511,7 @@ func (x *CreateSessionResponse) String() string {
 func (*CreateSessionResponse) ProtoMessage() {}
 
 func (x *CreateSessionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_gober_proto_msgTypes[4]
+	mi := &file_api_gober_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -280,7 +524,7 @@ func (x *CreateSessionResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateSessionResponse.ProtoReflect.Descriptor instead.
 func (*CreateSessionResponse) Descriptor() ([]byte, []int) {
-	return file_api_gober_proto_rawDescGZIP(), []int{4}
+	return file_api_gober_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *CreateSessionResponse) GetOfAccount() *Account {
@@ -306,7 +550,7 @@ type GetAccountRequest struct {
 
 func (x *GetAccountRequest) Reset() {
 	*x = GetAccountRequest{}
-	mi := &file_api_gober_proto_msgTypes[5]
+	mi := &file_api_gober_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -318,7 +562,7 @@ func (x *GetAccountRequest) String() string {
 func (*GetAccountRequest) ProtoMessage() {}
 
 func (x *GetAccountRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_gober_proto_msgTypes[5]
+	mi := &file_api_gober_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -331,7 +575,7 @@ func (x *GetAccountRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetAccountRequest.ProtoReflect.Descriptor instead.
 func (*GetAccountRequest) Descriptor() ([]byte, []int) {
-	return file_api_gober_proto_rawDescGZIP(), []int{5}
+	return file_api_gober_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *GetAccountRequest) GetAccountId() uint64 {
@@ -350,7 +594,7 @@ type GetAccountResponse struct {
 
 func (x *GetAccountResponse) Reset() {
 	*x = GetAccountResponse{}
-	mi := &file_api_gober_proto_msgTypes[6]
+	mi := &file_api_gober_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -362,7 +606,7 @@ func (x *GetAccountResponse) String() string {
 func (*GetAccountResponse) ProtoMessage() {}
 
 func (x *GetAccountResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_gober_proto_msgTypes[6]
+	mi := &file_api_gober_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -375,7 +619,7 @@ func (x *GetAccountResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetAccountResponse.ProtoReflect.Descriptor instead.
 func (*GetAccountResponse) Descriptor() ([]byte, []int) {
-	return file_api_gober_proto_rawDescGZIP(), []int{6}
+	return file_api_gober_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *GetAccountResponse) GetOfAccount() *Account {
@@ -383,6 +627,878 @@ func (x *GetAccountResponse) GetOfAccount() *Account {
 		return x.OfAccount
 	}
 	return nil
+}
+
+type CreateEventRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	EventUpdate   *EventUpdate           `protobuf:"bytes,1,opt,name=event_update,json=eventUpdate,proto3" json:"event_update,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateEventRequest) Reset() {
+	*x = CreateEventRequest{}
+	mi := &file_api_gober_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateEventRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateEventRequest) ProtoMessage() {}
+
+func (x *CreateEventRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_api_gober_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateEventRequest.ProtoReflect.Descriptor instead.
+func (*CreateEventRequest) Descriptor() ([]byte, []int) {
+	return file_api_gober_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *CreateEventRequest) GetEventUpdate() *EventUpdate {
+	if x != nil {
+		return x.EventUpdate
+	}
+	return nil
+}
+
+type CreateEventResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Event         *Event                 `protobuf:"bytes,1,opt,name=event,proto3" json:"event,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateEventResponse) Reset() {
+	*x = CreateEventResponse{}
+	mi := &file_api_gober_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateEventResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateEventResponse) ProtoMessage() {}
+
+func (x *CreateEventResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_api_gober_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateEventResponse.ProtoReflect.Descriptor instead.
+func (*CreateEventResponse) Descriptor() ([]byte, []int) {
+	return file_api_gober_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *CreateEventResponse) GetEvent() *Event {
+	if x != nil {
+		return x.Event
+	}
+	return nil
+}
+
+type UpdateEventRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	EventId       uint64                 `protobuf:"varint,1,opt,name=event_id,json=eventId,proto3" json:"event_id,omitempty"`
+	EventUpdate   *EventUpdate           `protobuf:"bytes,2,opt,name=event_update,json=eventUpdate,proto3" json:"event_update,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateEventRequest) Reset() {
+	*x = UpdateEventRequest{}
+	mi := &file_api_gober_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateEventRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateEventRequest) ProtoMessage() {}
+
+func (x *UpdateEventRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_api_gober_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateEventRequest.ProtoReflect.Descriptor instead.
+func (*UpdateEventRequest) Descriptor() ([]byte, []int) {
+	return file_api_gober_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *UpdateEventRequest) GetEventId() uint64 {
+	if x != nil {
+		return x.EventId
+	}
+	return 0
+}
+
+func (x *UpdateEventRequest) GetEventUpdate() *EventUpdate {
+	if x != nil {
+		return x.EventUpdate
+	}
+	return nil
+}
+
+type UpdateEventResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Event         *Event                 `protobuf:"bytes,1,opt,name=event,proto3" json:"event,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateEventResponse) Reset() {
+	*x = UpdateEventResponse{}
+	mi := &file_api_gober_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateEventResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateEventResponse) ProtoMessage() {}
+
+func (x *UpdateEventResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_api_gober_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateEventResponse.ProtoReflect.Descriptor instead.
+func (*UpdateEventResponse) Descriptor() ([]byte, []int) {
+	return file_api_gober_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *UpdateEventResponse) GetEvent() *Event {
+	if x != nil {
+		return x.Event
+	}
+	return nil
+}
+
+type DeleteEventRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	EventId       uint64                 `protobuf:"varint,1,opt,name=event_id,json=eventId,proto3" json:"event_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteEventRequest) Reset() {
+	*x = DeleteEventRequest{}
+	mi := &file_api_gober_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteEventRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteEventRequest) ProtoMessage() {}
+
+func (x *DeleteEventRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_api_gober_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteEventRequest.ProtoReflect.Descriptor instead.
+func (*DeleteEventRequest) Descriptor() ([]byte, []int) {
+	return file_api_gober_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *DeleteEventRequest) GetEventId() uint64 {
+	if x != nil {
+		return x.EventId
+	}
+	return 0
+}
+
+type DeleteEventResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteEventResponse) Reset() {
+	*x = DeleteEventResponse{}
+	mi := &file_api_gober_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteEventResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteEventResponse) ProtoMessage() {}
+
+func (x *DeleteEventResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_api_gober_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteEventResponse.ProtoReflect.Descriptor instead.
+func (*DeleteEventResponse) Descriptor() ([]byte, []int) {
+	return file_api_gober_proto_rawDescGZIP(), []int{15}
+}
+
+type GetEventRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	EventId       uint64                 `protobuf:"varint,1,opt,name=event_id,json=eventId,proto3" json:"event_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetEventRequest) Reset() {
+	*x = GetEventRequest{}
+	mi := &file_api_gober_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetEventRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetEventRequest) ProtoMessage() {}
+
+func (x *GetEventRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_api_gober_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetEventRequest.ProtoReflect.Descriptor instead.
+func (*GetEventRequest) Descriptor() ([]byte, []int) {
+	return file_api_gober_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *GetEventRequest) GetEventId() uint64 {
+	if x != nil {
+		return x.EventId
+	}
+	return 0
+}
+
+type GetEventResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Event         *Event                 `protobuf:"bytes,1,opt,name=event,proto3" json:"event,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetEventResponse) Reset() {
+	*x = GetEventResponse{}
+	mi := &file_api_gober_proto_msgTypes[17]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetEventResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetEventResponse) ProtoMessage() {}
+
+func (x *GetEventResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_api_gober_proto_msgTypes[17]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetEventResponse.ProtoReflect.Descriptor instead.
+func (*GetEventResponse) Descriptor() ([]byte, []int) {
+	return file_api_gober_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *GetEventResponse) GetEvent() *Event {
+	if x != nil {
+		return x.Event
+	}
+	return nil
+}
+
+type ListEventsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Offset        uint64                 `protobuf:"varint,1,opt,name=offset,proto3" json:"offset,omitempty"`
+	Limit         uint64                 `protobuf:"varint,2,opt,name=limit,proto3" json:"limit,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListEventsRequest) Reset() {
+	*x = ListEventsRequest{}
+	mi := &file_api_gober_proto_msgTypes[18]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListEventsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListEventsRequest) ProtoMessage() {}
+
+func (x *ListEventsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_api_gober_proto_msgTypes[18]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListEventsRequest.ProtoReflect.Descriptor instead.
+func (*ListEventsRequest) Descriptor() ([]byte, []int) {
+	return file_api_gober_proto_rawDescGZIP(), []int{18}
+}
+
+func (x *ListEventsRequest) GetOffset() uint64 {
+	if x != nil {
+		return x.Offset
+	}
+	return 0
+}
+
+func (x *ListEventsRequest) GetLimit() uint64 {
+	if x != nil {
+		return x.Limit
+	}
+	return 0
+}
+
+type ListEventsResponse struct {
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	Events          []*Event               `protobuf:"bytes,1,rep,name=events,proto3" json:"events,omitempty"`
+	TotalEventCount uint64                 `protobuf:"varint,2,opt,name=total_event_count,json=totalEventCount,proto3" json:"total_event_count,omitempty"`
+	HasNext         bool                   `protobuf:"varint,3,opt,name=has_next,json=hasNext,proto3" json:"has_next,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
+func (x *ListEventsResponse) Reset() {
+	*x = ListEventsResponse{}
+	mi := &file_api_gober_proto_msgTypes[19]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListEventsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListEventsResponse) ProtoMessage() {}
+
+func (x *ListEventsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_api_gober_proto_msgTypes[19]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListEventsResponse.ProtoReflect.Descriptor instead.
+func (*ListEventsResponse) Descriptor() ([]byte, []int) {
+	return file_api_gober_proto_rawDescGZIP(), []int{19}
+}
+
+func (x *ListEventsResponse) GetEvents() []*Event {
+	if x != nil {
+		return x.Events
+	}
+	return nil
+}
+
+func (x *ListEventsResponse) GetTotalEventCount() uint64 {
+	if x != nil {
+		return x.TotalEventCount
+	}
+	return 0
+}
+
+func (x *ListEventsResponse) GetHasNext() bool {
+	if x != nil {
+		return x.HasNext
+	}
+	return false
+}
+
+type CreateTicketRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	EventId       uint64                 `protobuf:"varint,1,opt,name=event_id,json=eventId,proto3" json:"event_id,omitempty"`
+	AccountId     uint64                 `protobuf:"varint,2,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateTicketRequest) Reset() {
+	*x = CreateTicketRequest{}
+	mi := &file_api_gober_proto_msgTypes[20]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateTicketRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateTicketRequest) ProtoMessage() {}
+
+func (x *CreateTicketRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_api_gober_proto_msgTypes[20]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateTicketRequest.ProtoReflect.Descriptor instead.
+func (*CreateTicketRequest) Descriptor() ([]byte, []int) {
+	return file_api_gober_proto_rawDescGZIP(), []int{20}
+}
+
+func (x *CreateTicketRequest) GetEventId() uint64 {
+	if x != nil {
+		return x.EventId
+	}
+	return 0
+}
+
+func (x *CreateTicketRequest) GetAccountId() uint64 {
+	if x != nil {
+		return x.AccountId
+	}
+	return 0
+}
+
+type CreateTicketResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Ticket        *Ticket                `protobuf:"bytes,2,opt,name=ticket,proto3" json:"ticket,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateTicketResponse) Reset() {
+	*x = CreateTicketResponse{}
+	mi := &file_api_gober_proto_msgTypes[21]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateTicketResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateTicketResponse) ProtoMessage() {}
+
+func (x *CreateTicketResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_api_gober_proto_msgTypes[21]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateTicketResponse.ProtoReflect.Descriptor instead.
+func (*CreateTicketResponse) Descriptor() ([]byte, []int) {
+	return file_api_gober_proto_rawDescGZIP(), []int{21}
+}
+
+func (x *CreateTicketResponse) GetTicket() *Ticket {
+	if x != nil {
+		return x.Ticket
+	}
+	return nil
+}
+
+type UpdateTicketRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	AccountId     uint64                 `protobuf:"varint,1,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
+	TicketId      uint64                 `protobuf:"varint,2,opt,name=ticket_id,json=ticketId,proto3" json:"ticket_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateTicketRequest) Reset() {
+	*x = UpdateTicketRequest{}
+	mi := &file_api_gober_proto_msgTypes[22]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateTicketRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateTicketRequest) ProtoMessage() {}
+
+func (x *UpdateTicketRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_api_gober_proto_msgTypes[22]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateTicketRequest.ProtoReflect.Descriptor instead.
+func (*UpdateTicketRequest) Descriptor() ([]byte, []int) {
+	return file_api_gober_proto_rawDescGZIP(), []int{22}
+}
+
+func (x *UpdateTicketRequest) GetAccountId() uint64 {
+	if x != nil {
+		return x.AccountId
+	}
+	return 0
+}
+
+func (x *UpdateTicketRequest) GetTicketId() uint64 {
+	if x != nil {
+		return x.TicketId
+	}
+	return 0
+}
+
+type UpdateTicketResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Ticket        *Ticket                `protobuf:"bytes,1,opt,name=ticket,proto3" json:"ticket,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateTicketResponse) Reset() {
+	*x = UpdateTicketResponse{}
+	mi := &file_api_gober_proto_msgTypes[23]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateTicketResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateTicketResponse) ProtoMessage() {}
+
+func (x *UpdateTicketResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_api_gober_proto_msgTypes[23]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateTicketResponse.ProtoReflect.Descriptor instead.
+func (*UpdateTicketResponse) Descriptor() ([]byte, []int) {
+	return file_api_gober_proto_rawDescGZIP(), []int{23}
+}
+
+func (x *UpdateTicketResponse) GetTicket() *Ticket {
+	if x != nil {
+		return x.Ticket
+	}
+	return nil
+}
+
+type GetTicketRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	AccountId     uint64                 `protobuf:"varint,1,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
+	TicketId      uint64                 `protobuf:"varint,2,opt,name=ticket_id,json=ticketId,proto3" json:"ticket_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetTicketRequest) Reset() {
+	*x = GetTicketRequest{}
+	mi := &file_api_gober_proto_msgTypes[24]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetTicketRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetTicketRequest) ProtoMessage() {}
+
+func (x *GetTicketRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_api_gober_proto_msgTypes[24]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetTicketRequest.ProtoReflect.Descriptor instead.
+func (*GetTicketRequest) Descriptor() ([]byte, []int) {
+	return file_api_gober_proto_rawDescGZIP(), []int{24}
+}
+
+func (x *GetTicketRequest) GetAccountId() uint64 {
+	if x != nil {
+		return x.AccountId
+	}
+	return 0
+}
+
+func (x *GetTicketRequest) GetTicketId() uint64 {
+	if x != nil {
+		return x.TicketId
+	}
+	return 0
+}
+
+type GetTicketResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Ticket        *Ticket                `protobuf:"bytes,1,opt,name=ticket,proto3" json:"ticket,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetTicketResponse) Reset() {
+	*x = GetTicketResponse{}
+	mi := &file_api_gober_proto_msgTypes[25]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetTicketResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetTicketResponse) ProtoMessage() {}
+
+func (x *GetTicketResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_api_gober_proto_msgTypes[25]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetTicketResponse.ProtoReflect.Descriptor instead.
+func (*GetTicketResponse) Descriptor() ([]byte, []int) {
+	return file_api_gober_proto_rawDescGZIP(), []int{25}
+}
+
+func (x *GetTicketResponse) GetTicket() *Ticket {
+	if x != nil {
+		return x.Ticket
+	}
+	return nil
+}
+
+type ListTicketsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	AccountId     uint64                 `protobuf:"varint,1,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
+	Offset        uint64                 `protobuf:"varint,2,opt,name=offset,proto3" json:"offset,omitempty"`
+	Limit         uint64                 `protobuf:"varint,3,opt,name=limit,proto3" json:"limit,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListTicketsRequest) Reset() {
+	*x = ListTicketsRequest{}
+	mi := &file_api_gober_proto_msgTypes[26]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListTicketsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListTicketsRequest) ProtoMessage() {}
+
+func (x *ListTicketsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_api_gober_proto_msgTypes[26]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListTicketsRequest.ProtoReflect.Descriptor instead.
+func (*ListTicketsRequest) Descriptor() ([]byte, []int) {
+	return file_api_gober_proto_rawDescGZIP(), []int{26}
+}
+
+func (x *ListTicketsRequest) GetAccountId() uint64 {
+	if x != nil {
+		return x.AccountId
+	}
+	return 0
+}
+
+func (x *ListTicketsRequest) GetOffset() uint64 {
+	if x != nil {
+		return x.Offset
+	}
+	return 0
+}
+
+func (x *ListTicketsRequest) GetLimit() uint64 {
+	if x != nil {
+		return x.Limit
+	}
+	return 0
+}
+
+type ListTicketsResponse struct {
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	Tickets          []*Ticket              `protobuf:"bytes,1,rep,name=tickets,proto3" json:"tickets,omitempty"`
+	TotalTicketCount uint64                 `protobuf:"varint,2,opt,name=total_ticket_count,json=totalTicketCount,proto3" json:"total_ticket_count,omitempty"`
+	HasNext          bool                   `protobuf:"varint,3,opt,name=has_next,json=hasNext,proto3" json:"has_next,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
+}
+
+func (x *ListTicketsResponse) Reset() {
+	*x = ListTicketsResponse{}
+	mi := &file_api_gober_proto_msgTypes[27]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListTicketsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListTicketsResponse) ProtoMessage() {}
+
+func (x *ListTicketsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_api_gober_proto_msgTypes[27]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListTicketsResponse.ProtoReflect.Descriptor instead.
+func (*ListTicketsResponse) Descriptor() ([]byte, []int) {
+	return file_api_gober_proto_rawDescGZIP(), []int{27}
+}
+
+func (x *ListTicketsResponse) GetTickets() []*Ticket {
+	if x != nil {
+		return x.Tickets
+	}
+	return nil
+}
+
+func (x *ListTicketsResponse) GetTotalTicketCount() uint64 {
+	if x != nil {
+		return x.TotalTicketCount
+	}
+	return 0
+}
+
+func (x *ListTicketsResponse) GetHasNext() bool {
+	if x != nil {
+		return x.HasNext
+	}
+	return false
 }
 
 var File_api_gober_proto protoreflect.FileDescriptor
@@ -398,7 +1514,32 @@ const file_api_gober_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\x04 \x01(\tR\tcreatedAt\x12\x1d\n" +
 	"\n" +
-	"updated_at\x18\x05 \x01(\tR\tupdatedAt\"H\n" +
+	"updated_at\x18\x05 \x01(\tR\tupdatedAt\"\x92\x02\n" +
+	"\x05Event\x12\x19\n" +
+	"\bevent_id\x18\x01 \x01(\x04R\aeventId\x12\x14\n" +
+	"\x05title\x18\x02 \x01(\tR\x05title\x12\x1a\n" +
+	"\blocation\x18\x03 \x01(\tR\blocation\x126\n" +
+	"\x17total_tickets_purchased\x18\x04 \x01(\x04R\x15totalTicketsPurchased\x122\n" +
+	"\x15total_tickets_entered\x18\x05 \x01(\x04R\x13totalTicketsEntered\x12\x12\n" +
+	"\x04date\x18\x06 \x01(\tR\x04date\x12\x1d\n" +
+	"\n" +
+	"created_at\x18\a \x01(\tR\tcreatedAt\x12\x1d\n" +
+	"\n" +
+	"updated_at\x18\b \x01(\tR\tupdatedAt\"S\n" +
+	"\vEventUpdate\x12\x14\n" +
+	"\x05title\x18\x01 \x01(\tR\x05title\x12\x1a\n" +
+	"\blocation\x18\x02 \x01(\tR\blocation\x12\x12\n" +
+	"\x04date\x18\x03 \x01(\tR\x04date\"\xb7\x01\n" +
+	"\x06Ticket\x12\x1b\n" +
+	"\tticket_id\x18\x01 \x01(\x04R\bticketId\x12\x19\n" +
+	"\bevent_id\x18\x02 \x01(\x04R\aeventId\x12\x1d\n" +
+	"\n" +
+	"account_id\x18\x03 \x01(\x04R\taccountId\x12\x18\n" +
+	"\aentered\x18\x05 \x01(\bR\aentered\x12\x1d\n" +
+	"\n" +
+	"created_at\x18\x06 \x01(\tR\tcreatedAt\x12\x1d\n" +
+	"\n" +
+	"updated_at\x18\a \x01(\tR\tupdatedAt\"H\n" +
 	"\x14CreateAccountRequest\x12\x14\n" +
 	"\x05email\x18\x01 \x01(\tR\x05email\x12\x1a\n" +
 	"\bpassword\x18\x02 \x01(\tR\bpassword\"6\n" +
@@ -417,12 +1558,76 @@ const file_api_gober_proto_rawDesc = "" +
 	"account_id\x18\x01 \x01(\x04R\taccountId\"A\n" +
 	"\x12GetAccountResponse\x12+\n" +
 	"\n" +
-	"of_account\x18\x01 \x01(\v2\f.api.AccountR\tofAccount2\xdd\x01\n" +
+	"of_account\x18\x01 \x01(\v2\f.api.AccountR\tofAccount\"I\n" +
+	"\x12CreateEventRequest\x123\n" +
+	"\fevent_update\x18\x01 \x01(\v2\x10.api.EventUpdateR\veventUpdate\"7\n" +
+	"\x13CreateEventResponse\x12 \n" +
+	"\x05event\x18\x01 \x01(\v2\n" +
+	".api.EventR\x05event\"d\n" +
+	"\x12UpdateEventRequest\x12\x19\n" +
+	"\bevent_id\x18\x01 \x01(\x04R\aeventId\x123\n" +
+	"\fevent_update\x18\x02 \x01(\v2\x10.api.EventUpdateR\veventUpdate\"7\n" +
+	"\x13UpdateEventResponse\x12 \n" +
+	"\x05event\x18\x01 \x01(\v2\n" +
+	".api.EventR\x05event\"/\n" +
+	"\x12DeleteEventRequest\x12\x19\n" +
+	"\bevent_id\x18\x01 \x01(\x04R\aeventId\"\x15\n" +
+	"\x13DeleteEventResponse\",\n" +
+	"\x0fGetEventRequest\x12\x19\n" +
+	"\bevent_id\x18\x01 \x01(\x04R\aeventId\"4\n" +
+	"\x10GetEventResponse\x12 \n" +
+	"\x05event\x18\x01 \x01(\v2\n" +
+	".api.EventR\x05event\"A\n" +
+	"\x11ListEventsRequest\x12\x16\n" +
+	"\x06offset\x18\x01 \x01(\x04R\x06offset\x12\x14\n" +
+	"\x05limit\x18\x02 \x01(\x04R\x05limit\"\x7f\n" +
+	"\x12ListEventsResponse\x12\"\n" +
+	"\x06events\x18\x01 \x03(\v2\n" +
+	".api.EventR\x06events\x12*\n" +
+	"\x11total_event_count\x18\x02 \x01(\x04R\x0ftotalEventCount\x12\x19\n" +
+	"\bhas_next\x18\x03 \x01(\bR\ahasNext\"O\n" +
+	"\x13CreateTicketRequest\x12\x19\n" +
+	"\bevent_id\x18\x01 \x01(\x04R\aeventId\x12\x1d\n" +
+	"\n" +
+	"account_id\x18\x02 \x01(\x04R\taccountId\";\n" +
+	"\x14CreateTicketResponse\x12#\n" +
+	"\x06ticket\x18\x02 \x01(\v2\v.api.TicketR\x06ticket\"Q\n" +
+	"\x13UpdateTicketRequest\x12\x1d\n" +
+	"\n" +
+	"account_id\x18\x01 \x01(\x04R\taccountId\x12\x1b\n" +
+	"\tticket_id\x18\x02 \x01(\x04R\bticketId\";\n" +
+	"\x14UpdateTicketResponse\x12#\n" +
+	"\x06ticket\x18\x01 \x01(\v2\v.api.TicketR\x06ticket\"N\n" +
+	"\x10GetTicketRequest\x12\x1d\n" +
+	"\n" +
+	"account_id\x18\x01 \x01(\x04R\taccountId\x12\x1b\n" +
+	"\tticket_id\x18\x02 \x01(\x04R\bticketId\"8\n" +
+	"\x11GetTicketResponse\x12#\n" +
+	"\x06ticket\x18\x01 \x01(\v2\v.api.TicketR\x06ticket\"a\n" +
+	"\x12ListTicketsRequest\x12\x1d\n" +
+	"\n" +
+	"account_id\x18\x01 \x01(\x04R\taccountId\x12\x16\n" +
+	"\x06offset\x18\x02 \x01(\x04R\x06offset\x12\x14\n" +
+	"\x05limit\x18\x03 \x01(\x04R\x05limit\"\x85\x01\n" +
+	"\x13ListTicketsResponse\x12%\n" +
+	"\atickets\x18\x01 \x03(\v2\v.api.TicketR\atickets\x12,\n" +
+	"\x12total_ticket_count\x18\x02 \x01(\x04R\x10totalTicketCount\x12\x19\n" +
+	"\bhas_next\x18\x03 \x01(\bR\ahasNext2\xa1\x06\n" +
 	"\fGoberService\x12F\n" +
 	"\rCreateAccount\x12\x19.api.CreateAccountRequest\x1a\x1a.api.CreateAccountResponse\x12F\n" +
 	"\rCreateSession\x12\x19.api.CreateSessionRequest\x1a\x1a.api.CreateSessionResponse\x12=\n" +
 	"\n" +
-	"GetAccount\x12\x16.api.GetAccountRequest\x1a\x17.api.GetAccountResponseB\rZ\v/grpc/goberb\x06proto3"
+	"GetAccount\x12\x16.api.GetAccountRequest\x1a\x17.api.GetAccountResponse\x12@\n" +
+	"\vCreateEvent\x12\x17.api.CreateEventRequest\x1a\x18.api.CreateEventResponse\x12@\n" +
+	"\vUpdateEvent\x12\x17.api.UpdateEventRequest\x1a\x18.api.UpdateEventResponse\x12@\n" +
+	"\vDeleteEvent\x12\x17.api.DeleteEventRequest\x1a\x18.api.DeleteEventResponse\x127\n" +
+	"\bGetEvent\x12\x14.api.GetEventRequest\x1a\x15.api.GetEventResponse\x12<\n" +
+	"\tGetEvents\x12\x16.api.ListEventsRequest\x1a\x17.api.ListEventsResponse\x12C\n" +
+	"\fCreateTicket\x12\x18.api.CreateTicketRequest\x1a\x19.api.CreateTicketResponse\x12C\n" +
+	"\fUpdateTicket\x12\x18.api.UpdateTicketRequest\x1a\x19.api.UpdateTicketResponse\x12:\n" +
+	"\tGetTicket\x12\x15.api.GetTicketRequest\x1a\x16.api.GetTicketResponse\x12?\n" +
+	"\n" +
+	"GetTickets\x12\x17.api.ListTicketsRequest\x1a\x18.api.ListTicketsResponseB\rZ\v/grpc/goberb\x06proto3"
 
 var (
 	file_api_gober_proto_rawDescOnce sync.Once
@@ -436,30 +1641,79 @@ func file_api_gober_proto_rawDescGZIP() []byte {
 	return file_api_gober_proto_rawDescData
 }
 
-var file_api_gober_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
+var file_api_gober_proto_msgTypes = make([]protoimpl.MessageInfo, 28)
 var file_api_gober_proto_goTypes = []any{
 	(*Account)(nil),               // 0: api.Account
-	(*CreateAccountRequest)(nil),  // 1: api.CreateAccountRequest
-	(*CreateAccountResponse)(nil), // 2: api.CreateAccountResponse
-	(*CreateSessionRequest)(nil),  // 3: api.CreateSessionRequest
-	(*CreateSessionResponse)(nil), // 4: api.CreateSessionResponse
-	(*GetAccountRequest)(nil),     // 5: api.GetAccountRequest
-	(*GetAccountResponse)(nil),    // 6: api.GetAccountResponse
+	(*Event)(nil),                 // 1: api.Event
+	(*EventUpdate)(nil),           // 2: api.EventUpdate
+	(*Ticket)(nil),                // 3: api.Ticket
+	(*CreateAccountRequest)(nil),  // 4: api.CreateAccountRequest
+	(*CreateAccountResponse)(nil), // 5: api.CreateAccountResponse
+	(*CreateSessionRequest)(nil),  // 6: api.CreateSessionRequest
+	(*CreateSessionResponse)(nil), // 7: api.CreateSessionResponse
+	(*GetAccountRequest)(nil),     // 8: api.GetAccountRequest
+	(*GetAccountResponse)(nil),    // 9: api.GetAccountResponse
+	(*CreateEventRequest)(nil),    // 10: api.CreateEventRequest
+	(*CreateEventResponse)(nil),   // 11: api.CreateEventResponse
+	(*UpdateEventRequest)(nil),    // 12: api.UpdateEventRequest
+	(*UpdateEventResponse)(nil),   // 13: api.UpdateEventResponse
+	(*DeleteEventRequest)(nil),    // 14: api.DeleteEventRequest
+	(*DeleteEventResponse)(nil),   // 15: api.DeleteEventResponse
+	(*GetEventRequest)(nil),       // 16: api.GetEventRequest
+	(*GetEventResponse)(nil),      // 17: api.GetEventResponse
+	(*ListEventsRequest)(nil),     // 18: api.ListEventsRequest
+	(*ListEventsResponse)(nil),    // 19: api.ListEventsResponse
+	(*CreateTicketRequest)(nil),   // 20: api.CreateTicketRequest
+	(*CreateTicketResponse)(nil),  // 21: api.CreateTicketResponse
+	(*UpdateTicketRequest)(nil),   // 22: api.UpdateTicketRequest
+	(*UpdateTicketResponse)(nil),  // 23: api.UpdateTicketResponse
+	(*GetTicketRequest)(nil),      // 24: api.GetTicketRequest
+	(*GetTicketResponse)(nil),     // 25: api.GetTicketResponse
+	(*ListTicketsRequest)(nil),    // 26: api.ListTicketsRequest
+	(*ListTicketsResponse)(nil),   // 27: api.ListTicketsResponse
 }
 var file_api_gober_proto_depIdxs = []int32{
-	0, // 0: api.CreateSessionResponse.of_account:type_name -> api.Account
-	0, // 1: api.GetAccountResponse.of_account:type_name -> api.Account
-	1, // 2: api.GoberService.CreateAccount:input_type -> api.CreateAccountRequest
-	3, // 3: api.GoberService.CreateSession:input_type -> api.CreateSessionRequest
-	5, // 4: api.GoberService.GetAccount:input_type -> api.GetAccountRequest
-	2, // 5: api.GoberService.CreateAccount:output_type -> api.CreateAccountResponse
-	4, // 6: api.GoberService.CreateSession:output_type -> api.CreateSessionResponse
-	6, // 7: api.GoberService.GetAccount:output_type -> api.GetAccountResponse
-	5, // [5:8] is the sub-list for method output_type
-	2, // [2:5] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	0,  // 0: api.CreateSessionResponse.of_account:type_name -> api.Account
+	0,  // 1: api.GetAccountResponse.of_account:type_name -> api.Account
+	2,  // 2: api.CreateEventRequest.event_update:type_name -> api.EventUpdate
+	1,  // 3: api.CreateEventResponse.event:type_name -> api.Event
+	2,  // 4: api.UpdateEventRequest.event_update:type_name -> api.EventUpdate
+	1,  // 5: api.UpdateEventResponse.event:type_name -> api.Event
+	1,  // 6: api.GetEventResponse.event:type_name -> api.Event
+	1,  // 7: api.ListEventsResponse.events:type_name -> api.Event
+	3,  // 8: api.CreateTicketResponse.ticket:type_name -> api.Ticket
+	3,  // 9: api.UpdateTicketResponse.ticket:type_name -> api.Ticket
+	3,  // 10: api.GetTicketResponse.ticket:type_name -> api.Ticket
+	3,  // 11: api.ListTicketsResponse.tickets:type_name -> api.Ticket
+	4,  // 12: api.GoberService.CreateAccount:input_type -> api.CreateAccountRequest
+	6,  // 13: api.GoberService.CreateSession:input_type -> api.CreateSessionRequest
+	8,  // 14: api.GoberService.GetAccount:input_type -> api.GetAccountRequest
+	10, // 15: api.GoberService.CreateEvent:input_type -> api.CreateEventRequest
+	12, // 16: api.GoberService.UpdateEvent:input_type -> api.UpdateEventRequest
+	14, // 17: api.GoberService.DeleteEvent:input_type -> api.DeleteEventRequest
+	16, // 18: api.GoberService.GetEvent:input_type -> api.GetEventRequest
+	18, // 19: api.GoberService.GetEvents:input_type -> api.ListEventsRequest
+	20, // 20: api.GoberService.CreateTicket:input_type -> api.CreateTicketRequest
+	22, // 21: api.GoberService.UpdateTicket:input_type -> api.UpdateTicketRequest
+	24, // 22: api.GoberService.GetTicket:input_type -> api.GetTicketRequest
+	26, // 23: api.GoberService.GetTickets:input_type -> api.ListTicketsRequest
+	5,  // 24: api.GoberService.CreateAccount:output_type -> api.CreateAccountResponse
+	7,  // 25: api.GoberService.CreateSession:output_type -> api.CreateSessionResponse
+	9,  // 26: api.GoberService.GetAccount:output_type -> api.GetAccountResponse
+	11, // 27: api.GoberService.CreateEvent:output_type -> api.CreateEventResponse
+	13, // 28: api.GoberService.UpdateEvent:output_type -> api.UpdateEventResponse
+	15, // 29: api.GoberService.DeleteEvent:output_type -> api.DeleteEventResponse
+	17, // 30: api.GoberService.GetEvent:output_type -> api.GetEventResponse
+	19, // 31: api.GoberService.GetEvents:output_type -> api.ListEventsResponse
+	21, // 32: api.GoberService.CreateTicket:output_type -> api.CreateTicketResponse
+	23, // 33: api.GoberService.UpdateTicket:output_type -> api.UpdateTicketResponse
+	25, // 34: api.GoberService.GetTicket:output_type -> api.GetTicketResponse
+	27, // 35: api.GoberService.GetTickets:output_type -> api.ListTicketsResponse
+	24, // [24:36] is the sub-list for method output_type
+	12, // [12:24] is the sub-list for method input_type
+	12, // [12:12] is the sub-list for extension type_name
+	12, // [12:12] is the sub-list for extension extendee
+	0,  // [0:12] is the sub-list for field type_name
 }
 
 func init() { file_api_gober_proto_init() }
@@ -473,7 +1727,7 @@ func file_api_gober_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_api_gober_proto_rawDesc), len(file_api_gober_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   7,
+			NumMessages:   28,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

@@ -1,5 +1,10 @@
 import { ApiResponse } from "./api";
 
+export enum UserRole {
+	Attendee = "attendee",
+	Manager = "manager",
+}
+
 export type AuthResponse = ApiResponse<
     { of_account: User; token: string; }
 >;
@@ -7,7 +12,7 @@ export type AuthResponse = ApiResponse<
 export type User = {
     account_id: number;
     email: string;
-    role: string;
+    role: UserRole;
 	createdAt: string;
 	updatedAt: string;
 }

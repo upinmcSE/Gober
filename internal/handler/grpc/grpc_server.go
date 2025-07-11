@@ -50,12 +50,12 @@ func (g grpcServer) StartGRPCServer(wg *sync.WaitGroup) {
 	accountService := service.NewAccountService(accountRepo, tokenService, hashService)
 
 	// Initialize handler
-	handler, err := NewAccountHandler(accountService)
+	accountHandler, err := NewAccountHandler(accountService)
 	if err != nil {
 		log.Fatalf("failed to create account handler: %v", err)
 	}
 
-	gober.RegisterGoberServiceServer(s, handler)
+	gober.RegisterGoberServiceServer(s, accountHandler)
 
 	log.Println("gRPC server listening at :8080")
 	if err := s.Serve(lis); err != nil {
