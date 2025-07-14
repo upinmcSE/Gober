@@ -29,7 +29,7 @@ type eventService struct {
 func (e eventService) GetMany(ctx context.Context, offset uint64, limit uint64) ([]*mysql.Event, error) {
 	events, err := e.db.GetMany(ctx)
 	if err != nil {
-		return nil, status.Error(codes.Internal, "Không thể lấy danh sách sự kiện")
+		return nil, status.Error(codes.DataLoss, "Không thể lấy danh sách sự kiện")
 	}
 
 	if offset >= uint64(len(events)) {
@@ -62,7 +62,7 @@ func (e eventService) CreateOne(ctx context.Context, event CreateEventParams) (*
 
 	createdEvent, err := e.db.CreateOne(ctx, newEvent)
 	if err != nil {
-		return nil, status.Error(codes.Internal, "Không thể tạo sự kiện mới")
+		return nil, status.Error(codes.DataLoss, "Không thể tạo sự kiện mới")
 	}
 
 	return createdEvent, nil
@@ -71,7 +71,7 @@ func (e eventService) CreateOne(ctx context.Context, event CreateEventParams) (*
 func (e eventService) UpdateOne(ctx context.Context, eventId uint64, updateData map[string]interface{}) (*mysql.Event, error) {
 	event, err := e.db.UpdateOne(ctx, eventId, updateData)
 	if err != nil {
-		return nil, status.Error(codes.Internal, "Không thể cập nhật sự kiện")
+		return nil, status.Error(codes.DataLoss, "Không thể cập nhật sự kiện")
 	}
 
 	if event == nil {
@@ -84,7 +84,7 @@ func (e eventService) UpdateOne(ctx context.Context, eventId uint64, updateData 
 func (e eventService) DeleteOne(ctx context.Context, eventId uint64) error {
 	err := e.db.DeleteOne(ctx, eventId)
 	if err != nil {
-		return status.Error(codes.Internal, "Không thể xóa sự kiện")
+		return status.Error(codes.DataLoss, "Không thể xóa sự kiện")
 	}
 
 	return nil

@@ -24,7 +24,7 @@ type Account struct {
 	Password  string    `json:"-"` // Do not compute the password in json
 	CreatedAt time.Time `json:"createdAt" gorm:"column:created_at"`
 	UpdatedAt time.Time `json:"updatedAt" gorm:"column:updated_at"`
-	IsDeleted bool      `json:"isDeleted" gorm:"bool;default:true;column:is_deleted"`
+	IsDeleted bool      `json:"isDeleted" gorm:"bool;default:false;column:is_deleted"`
 }
 
 type AccountDatabase interface {
@@ -59,7 +59,7 @@ func (a *accountDatabase) CreateAccount(ctx context.Context, account *Account) (
 
 // GetAccountByEmail implements AccountDatabase.
 func (a *accountDatabase) GetAccountByEmail(ctx context.Context, email string) (*Account, error) {
-	var account Account
+	var account *Account
 	err := a.db.WithContext(ctx).
 		Where(&Account{Email: email, IsDeleted: false}).
 		First(&account).Error
@@ -68,10 +68,10 @@ func (a *accountDatabase) GetAccountByEmail(ctx context.Context, email string) (
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil // email chưa tồn tại
 		}
-		return nil, status.Error(codes.Internal, "failed to get account by email")
+		return nil, err
 	}
 
-	return &account, nil
+	return account, nil
 }
 
 // GetAccountByID implements AccountDatabase.
@@ -85,7 +85,7 @@ func (a *accountDatabase) GetAccountByID(ctx context.Context, id uint64) (*Accou
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
 		}
-		return nil, status.Error(codes.Internal, "failed to get account by id")
+		return nil, err
 	}
 
 	return &account, nil

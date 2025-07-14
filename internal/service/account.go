@@ -130,7 +130,37 @@ func (a *accountService) GetAccountByID(ctx context.Context, id uint64) (*gober.
 	return databaseAccountToProtoAccount(*account), nil
 }
 
+func InitAdminAccount(db mysql.AccountDatabase, hash Hash) error {
+	// Check if the admin account already exists
+	adminAccount, err := db.GetAccountByEmail(context.Background(), "admin@gmail.com")
+	if err != nil {
+		return status.Error(codes.Internal, "failed to check admin account existence")
+	}
+	if adminAccount != nil {
+		return nil // Admin account already exists, no need to create
+	}
+	hashPassword, err := hash.Hash(context.Background(), "admin")
+	if err != nil {
+		return status.Error(codes.Internal, "failed to hash admin password")
+	}
+	// Create the admin account with a default password
+	_, err = db.CreateAccount(context.Background(), &mysql.Account{
+		Email:    "admin@gmail.com",
+		Password: hashPassword,
+		Role:     mysql.Manager,
+	})
+	if err != nil {
+		return status.Error(codes.Internal, "failed to create admin account")
+	}
+	return nil
+}
+
 func NewAccountService(db mysql.AccountDatabase, token TokenService, hash Hash) AccountService {
+	err := InitAdminAccount(db, hash)
+	if err != nil {
+		return nil
+	}
+
 	return &accountService{
 		db:    db,
 		token: token,

@@ -1,14 +1,17 @@
+import { View, Text } from 'react-native';
 import { useAuth } from '@/context/AuthContext';
-import { VStack } from '@/components/VStack';
-import { Button } from '@/components/Button';
+import { globals } from '@/styles/_global';
 
 export default function SettingsScreen() {
   const { logout } = useAuth();
 
   return (
-    <VStack flex={ 1 } m={ 20 }>
-      <Button onPress={ logout }>Logout</Button>
-    </VStack>
+    <View style={ globals.container }>
+      <Text>Settings</Text>
+      <Text
+        onPress={ logout }>
+        Logout
+      </Text>
+    </View>
   );
-    return <></>
 }

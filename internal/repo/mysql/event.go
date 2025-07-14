@@ -64,9 +64,9 @@ func (e eventDatabase) CreateOne(ctx context.Context, event *Event) (*Event, err
 }
 
 func (e eventDatabase) UpdateOne(ctx context.Context, eventId uint64, updateData map[string]interface{}) (*Event, error) {
-	event := &Event{}
+	event := new(Event)
 
-	updateRes := e.db.Model(event).Where("id = ?", eventId).Updates(updateData)
+	updateRes := e.db.WithContext(ctx).Where("id = ?", eventId).Updates(updateData)
 
 	if updateRes.Error != nil {
 		return nil, updateRes.Error

@@ -23,7 +23,7 @@ export default function EventsScreen() {
 
   function onGoToEventPage(id: number) {
     if (user?.role === UserRole.Manager) {
-      router.push(`/(events)/event/${id}`);
+      router.push(`/(authed)/(tabs)/(events)/event/${id}`);
     }
   }
 
@@ -41,7 +41,7 @@ export default function EventsScreen() {
     try {
       setIsLoading(true);
       const response = await eventService.getAll();
-      setEvents(response.data);
+      setEvents(response.data[0]);
     } catch (error) {
       Alert.alert("Error", "Failed to fetch events");
     } finally {
@@ -74,10 +74,11 @@ export default function EventsScreen() {
           <VStack
             gap={ 20 }
             p={ 20 }
-            style={ {
+            style={{
               backgroundColor: 'white',
               borderRadius: 20,
-            } } key={ event.id }>
+            }} 
+            key={ event.id }>
 
             <TouchableOpacity onPress={ () => onGoToEventPage(event.id) }>
               <HStack alignItems='center' justifyContent="space-between">
@@ -125,6 +126,6 @@ export default function EventsScreen() {
 
 const headerRight = () => {
   return (
-    <TabBarIcon size={ 32 } name="add-circle-outline" onPress={ () => router.push('/(events)/new') } />
+    <TabBarIcon size={ 32 } name="add-circle-outline" onPress={ () => router.push('/(authed)/(tabs)/(events)/new') } />
   );
 };

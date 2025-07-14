@@ -2,6 +2,7 @@ package mysql
 
 import (
 	"Gober/configs"
+	"context"
 	"fmt"
 	"log"
 	"os"
@@ -18,7 +19,7 @@ var DB *gorm.DB // Biến global để chứa instance DB
 // InitDB khởi tạo kết nối đến MySQL và trả về GORM DB instance
 func InitDB(cfg *configs.Config) (*gorm.DB, error) {
 
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
+	connStr := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
 		cfg.Database.User, cfg.Database.Password, cfg.Database.Host, cfg.Database.Port, cfg.Database.DbName)
 
 	// Cấu hình GORM logger
@@ -33,21 +34,24 @@ func InitDB(cfg *configs.Config) (*gorm.DB, error) {
 	)
 
 	var err error
-	DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{
-		NamingStrategy: schema.NamingStrategy{
-			SingularTable: true, // Sử dụng tên bảng số ít, ví dụ: 'user' thay vì 'users'
-		},
-		Logger: newLogger,
-	})
+	DB, err = gorm.Open(
+		mysql.Open(connStr),
+		&gorm.Config{
+			NamingStrategy: schema.NamingStrategy{
+				SingularTable: true, // Sử dụng tên bảng số ít, ví dụ: 'user' thay vì 'users'
+			},
+			Logger: newLogger,
+		})
 
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect database: %w", err)
 	}
 
 	// auto-migrate các model
-	err = DB.AutoMigrate(&Account{})
+	migrator := NewMigrator(DB)
+	err = migrator.Migrate(context.Background())
 	if err != nil {
-		return nil, fmt.Errorf("failed to auto migrate: %w", err)
+		return nil, err
 	}
 
 	// sqlDB, err := DB.DB()
