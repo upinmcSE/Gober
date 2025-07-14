@@ -5,6 +5,7 @@ import (
 	"Gober/internal/generated/grpc/gober"
 	"Gober/internal/repo/mysql"
 	"Gober/internal/service"
+	"context"
 	"google.golang.org/grpc"
 	"log"
 	"net"
@@ -12,39 +13,65 @@ import (
 )
 
 type GRPCServer interface {
-	StartGRPCServer(wg *sync.WaitGroup)
+	StartGRPCServer(ctx context.Context) error
 }
 
 type grpcServer struct {
+	config  *configs.Config
 	handler gober.GoberServiceServer
+	server  *grpc.Server
+	mu      sync.RWMutex
 }
 
-func (g grpcServer) StartGRPCServer(wg *sync.WaitGroup) {
-	defer wg.Done()
+func (g *grpcServer) StartGRPCServer(ctx context.Context) error {
 
-	lis, err := net.Listen("tcp", ":8080")
+	lis, err := net.Listen("tcp", ":"+g.config.Server.PortGrpc)
 	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
+		return err
 	}
 
-	s := grpc.NewServer()
+	g.mu.Lock()
+	g.server = grpc.NewServer()
+	g.mu.Unlock()
 
-	// Load configuration
-	config, err := configs.LoadConfig()
-	if err != nil {
-		log.Fatalf("failed to load config: %v", err)
+	// Initialize dependencies
+	if err := g.initializeDependencies(); err != nil {
+		return err
 	}
+
+	// Start server in goroutine
+	go func() {
+		log.Println("gRPC server listening at :8080")
+		if err := g.server.Serve(lis); err != nil {
+			log.Printf("gRPC server error: %v", err)
+		}
+	}()
+
+	// Wait for context cancellation
+	<-ctx.Done()
+
+	// Graceful shutdown
+	g.mu.RLock()
+	if g.server != nil {
+		g.server.GracefulStop()
+	}
+	g.mu.RUnlock()
+
+	return nil
+}
+
+func (g *grpcServer) initializeDependencies() error {
 
 	// Initialize database connection
-	db, err := mysql.InitDB(&config)
+	db, err := mysql.InitDB(g.config)
 	if err != nil {
-		log.Fatalf("failed to connect to database: %v", err)
+		return err
 	}
 
 	// Initialize repository
 	accountRepo := mysql.NewAccountDatabase(db)
 
-	// Initialize service
+	// Initialize services
 	hashService := service.NewHash()
 	tokenService := service.NewTokenService()
 	accountService := service.NewAccountService(accountRepo, tokenService, hashService)
@@ -52,19 +79,18 @@ func (g grpcServer) StartGRPCServer(wg *sync.WaitGroup) {
 	// Initialize handler
 	accountHandler, err := NewAccountHandler(accountService)
 	if err != nil {
-		log.Fatalf("failed to create account handler: %v", err)
+		return err
 	}
 
-	gober.RegisterGoberServiceServer(s, accountHandler)
+	g.mu.RLock()
+	gober.RegisterGoberServiceServer(g.server, accountHandler)
+	g.mu.RUnlock()
 
-	log.Println("gRPC server listening at :8080")
-	if err := s.Serve(lis); err != nil {
-		log.Fatalf("failed to serve: %v", err)
-	}
+	return nil
 }
 
-func NewGRPCServer(handler gober.GoberServiceServer) GRPCServer {
+func NewGRPCServer(config *configs.Config) GRPCServer {
 	return &grpcServer{
-		handler: handler,
+		config: config,
 	}
 }

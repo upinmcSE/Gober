@@ -1,69 +1,142 @@
 package http
 
 import (
+	"Gober/configs"
 	"Gober/internal/generated/grpc/gober"
 	"Gober/internal/middleware"
 	"Gober/pkg/logger"
+	"context"
 	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 	"log"
+	"net/http"
 	"sync"
 	"time"
 )
 
 type HTTPServer interface {
-	StartHTTPServer(wg *sync.WaitGroup)
+	StartHTTPServer(ctx context.Context) error
 }
 
-type httpServer struct{}
+type httpServer struct {
+	config *configs.Config
+	server *http.Server
+	conn   *grpc.ClientConn
+	mu     sync.RWMutex
+}
 
-func (h httpServer) StartHTTPServer(wg *sync.WaitGroup) {
-	defer wg.Done()
-
-	// Đợi một chút để gRPC server khởi động trước
-	time.Sleep(2 * time.Second)
-
-	// grpc client
-	conn, err := grpc.Dial("localhost:8080", grpc.WithInsecure())
-	if err != nil {
-		log.Fatalf("Failed to connect to gRPC server: %v", err)
+func (h *httpServer) StartHTTPServer(ctx context.Context) error {
+	// Initialize gRPC client connection
+	if err := h.initGRPCClient(h.config.Server.PortGrpc); err != nil {
+		return err
 	}
 
-	client := gober.NewGoberServiceClient(conn)
+	// Setup HTTP server
+	router := h.setupRouter()
 
+	h.mu.Lock()
+	h.server = &http.Server{
+		Addr:           ":" + h.config.Server.PortHttp,
+		Handler:        router,
+		ReadTimeout:    10 * time.Second,
+		WriteTimeout:   10 * time.Second,
+		IdleTimeout:    15 * time.Second,
+		MaxHeaderBytes: 1 << 20,
+	}
+	h.mu.Unlock()
+
+	// Start server in goroutine
+	go func() {
+		log.Println("HTTP server listening at :8082")
+		if err := h.server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Printf("HTTP server error: %v", err)
+		}
+	}()
+
+	// Wait for context cancellation
+	<-ctx.Done()
+
+	// Graceful shutdown
+	return h.shutdown()
+}
+
+func (h *httpServer) initGRPCClient(portGrpc string) error {
+	var err error
+	h.conn, err = grpc.Dial("localhost:"+portGrpc,
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+		grpc.WithTimeout(5*time.Second),
+	)
+	return err
+}
+
+func (h *httpServer) setupRouter() *gin.Engine {
 	r := gin.Default()
 
+	// Setup API versioning
 	v1 := r.Group("/v1/2025")
 
-	httpLogger := logger.NewLoggerWithPath("../../internal/logs/http.log", "info")
-	rateLimiterLogger := logger.NewLoggerWithPath("../../internal/logs/rate_limiter.log", "warning")
+	// Initialize loggers
+	httpLogger := logger.NewLoggerWithPath("logs/http.log", "info")
+	rateLimiterLogger := logger.NewLoggerWithPath("logs/rate_limiter.log", "warning")
+
+	// Apply middleware
 	v1.Use(
 		middleware.ApikeyMiddleware(),
 		middleware.CORSMiddleware(),
 		middleware.LoggerMiddleware(httpLogger),
 		middleware.RateLimiterMiddleware(rateLimiterLogger),
+		gzip.Gzip(gzip.BestCompression),
 	)
 
-	v1.Use(gzip.Gzip(gzip.BestCompression))
+	// Setup routes
+	h.setupRoutes(v1)
 
-	account := v1.Group("/accounts")
+	return r
+}
+
+func (h *httpServer) setupRoutes(rg *gin.RouterGroup) {
+	client := gober.NewGoberServiceClient(h.conn)
 	accountHandler := NewAccountHandler(client)
+
+	account := rg.Group("/accounts")
 	account.POST("/create", accountHandler.CreateHandler)
 	account.POST("/session", accountHandler.CreateSessionHandler)
 	account.GET("/:id", accountHandler.GetAccountHandler)
 
-	//event := v1.Group("/events")
-
-	//ticket := v1.Group("/tickets")
-
-	log.Println("HTTP server listening at :8082")
-	if err := r.Run(":8082"); err != nil {
-		log.Fatalf("Failed to run HTTP server: %v", err)
-	}
-
+	// Future routes
+	// event := rg.Group("/events")
+	// ticket := rg.Group("/tickets")
 }
 
-func NewHTTPServer() HTTPServer {
-	return &httpServer{}
+func (h *httpServer) shutdown() error {
+	// Shutdown HTTP server
+	shutdownCtx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	h.mu.RLock()
+	server := h.server
+	h.mu.RUnlock()
+
+	if server != nil {
+		if err := server.Shutdown(shutdownCtx); err != nil {
+			log.Printf("HTTP server shutdown error: %v", err)
+		}
+	}
+
+	// Close gRPC connection
+	if h.conn != nil {
+		if err := h.conn.Close(); err != nil {
+			log.Printf("gRPC connection close error: %v", err)
+		}
+	}
+
+	return nil
+}
+
+func NewHTTPServer(config *configs.Config) HTTPServer {
+	return &httpServer{
+		config: config,
+	}
 }

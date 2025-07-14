@@ -1,37 +1,67 @@
 package main
 
 import (
+	configs2 "Gober/configs"
 	"Gober/internal/handler/grpc"
 	"Gober/internal/handler/http"
+	"context"
 	"log"
-	"sync"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
 )
 
 func main() {
-	var wg sync.WaitGroup
-	wg.Add(2)
+	// Initialize configurations
+	config, err := configs2.LoadConfig()
+	if err != nil {
+		log.Fatalf("Failed to load configuration: %v", err)
+	}
+	// Create context for graceful shutdown
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	// Channel to receive OS signals
+	sigChan := make(chan os.Signal, 1)
+	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
+
+	// Channel to receive errors from servers
+	errChan := make(chan error, 2)
+
+	if err != nil {
+		log.Fatalf("Failed to load configuration: %v", err)
+	}
 
 	// Start gRPC server
+	grpcServer := grpc.NewGRPCServer(&config)
 	go func() {
-		defer func() {
-			if r := recover(); r != nil {
-				log.Printf("Recovered in gRPC server: %v", r)
-			}
-		}()
-		grpcServer := grpc.NewGRPCServer(nil)
-		grpcServer.StartGRPCServer(&wg)
+		if err := grpcServer.StartGRPCServer(ctx); err != nil {
+			errChan <- err
+		}
 	}()
+
+	// Wait for gRPC server to be ready
+	time.Sleep(2 * time.Second)
 
 	// Start HTTP server
+	httpServer := http.NewHTTPServer(&config)
 	go func() {
-		defer func() {
-			if r := recover(); r != nil {
-				log.Printf("Recovered in HTTP server: %v", r)
-			}
-		}()
-		httpServer := http.NewHTTPServer()
-		httpServer.StartHTTPServer(&wg)
+		if err := httpServer.StartHTTPServer(ctx); err != nil {
+			errChan <- err
+		}
 	}()
 
-	wg.Wait()
+	// Wait for termination signal or error
+	select {
+	case <-sigChan:
+		log.Println("Received termination signal, shutting down...")
+	case err := <-errChan:
+		log.Printf("Server error: %v", err)
+	}
+
+	// Graceful shutdown
+	cancel()
+	time.Sleep(5 * time.Second) // Give servers time to shutdown
+	log.Println("Servers stopped")
 }

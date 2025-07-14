@@ -23,7 +23,8 @@ type RateLimitConfig struct {
 
 type ServerConfig struct {
 	Host      string
-	Port      string
+	PortGrpc  string
+	PortHttp  string
 	ApiKey    string
 	RateLimit RateLimitConfig
 }
