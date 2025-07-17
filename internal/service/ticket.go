@@ -20,18 +20,18 @@ type TicketParams struct {
 }
 
 type TicketService interface {
-	GetMany(ctx context.Context, accountId uint64, offset uint64, limit uint64) ([]*mysql.Ticket, error)
-	GetOne(ctx context.Context, params TicketParams) (*mysql.Ticket, error)
-	CreateOne(ctx context.Context, params CreateTicketParams) (*mysql.Ticket, error)
-	UpdateOne(ctx context.Context, params TicketParams) (*mysql.Ticket, error)
+	GetTickets(ctx context.Context, accountId uint64, offset uint64, limit uint64) ([]*mysql.Ticket, error)
+	GetTicket(ctx context.Context, params TicketParams) (*mysql.Ticket, error)
+	CreateTicket(ctx context.Context, params CreateTicketParams) (*mysql.Ticket, error)
+	UpdateTicket(ctx context.Context, params TicketParams) (*mysql.Ticket, error)
 }
 
 type ticketService struct {
 	db mysql.TicketDatabase
 }
 
-func (t ticketService) GetMany(ctx context.Context, accountId uint64, offset uint64, limit uint64) ([]*mysql.Ticket, error) {
-	tickets, err := t.db.GetMany(ctx, accountId, offset, limit)
+func (t ticketService) GetTickets(ctx context.Context, accountId uint64, offset uint64, limit uint64) ([]*mysql.Ticket, error) {
+	tickets, err := t.db.GetTickets(ctx, accountId, offset, limit)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "Không thể lấy danh sách vé")
 	}
@@ -39,8 +39,8 @@ func (t ticketService) GetMany(ctx context.Context, accountId uint64, offset uin
 	return tickets, nil
 }
 
-func (t ticketService) GetOne(ctx context.Context, params TicketParams) (*mysql.Ticket, error) {
-	ticket, err := t.db.GetOne(ctx, params.AccountId, params.TicketId)
+func (t ticketService) GetTicket(ctx context.Context, params TicketParams) (*mysql.Ticket, error) {
+	ticket, err := t.db.GetTicket(ctx, params.AccountId, params.TicketId)
 
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -52,13 +52,13 @@ func (t ticketService) GetOne(ctx context.Context, params TicketParams) (*mysql.
 	return ticket, nil
 }
 
-func (t ticketService) CreateOne(ctx context.Context, params CreateTicketParams) (*mysql.Ticket, error) {
+func (t ticketService) CreateTicket(ctx context.Context, params CreateTicketParams) (*mysql.Ticket, error) {
 	ticket := &mysql.Ticket{
 		EventID:   params.EventId,
 		AccountID: params.AccountId,
 	}
 
-	createdTicket, err := t.db.CreateOne(ctx, params.AccountId, ticket)
+	createdTicket, err := t.db.CreateTicket(ctx, params.AccountId, ticket)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "Không thể tạo vé mới")
 	}
@@ -66,8 +66,8 @@ func (t ticketService) CreateOne(ctx context.Context, params CreateTicketParams)
 	return createdTicket, nil
 }
 
-func (t ticketService) UpdateOne(ctx context.Context, params TicketParams) (*mysql.Ticket, error) {
-	ticket, err := t.db.GetOne(ctx, params.AccountId, params.TicketId)
+func (t ticketService) UpdateTicket(ctx context.Context, params TicketParams) (*mysql.Ticket, error) {
+	ticket, err := t.db.GetTicket(ctx, params.AccountId, params.TicketId)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, status.Error(codes.NotFound, "Không tìm thấy vé với ID")
@@ -80,7 +80,7 @@ func (t ticketService) UpdateOne(ctx context.Context, params TicketParams) (*mys
 	}
 
 	if !ticket.Entered {
-		ticket, err = t.db.UpdateOne(ctx, params.TicketId)
+		ticket, err = t.db.UpdateTicket(ctx, params.TicketId)
 		if err != nil {
 			return nil, status.Error(codes.Internal, "Không thể cập nhật vé")
 		}

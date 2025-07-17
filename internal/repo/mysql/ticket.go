@@ -17,17 +17,17 @@ type Ticket struct {
 }
 
 type TicketDatabase interface {
-	GetMany(ctx context.Context, accountId, offset, limit uint64) ([]*Ticket, error)
-	GetOne(ctx context.Context, accountId uint64, ticketId uint64) (*Ticket, error)
-	CreateOne(ctx context.Context, accountId uint64, ticket *Ticket) (*Ticket, error)
-	UpdateOne(ctx context.Context, ticketId uint64) (*Ticket, error)
+	GetTickets(ctx context.Context, accountId, offset, limit uint64) ([]*Ticket, error)
+	GetTicket(ctx context.Context, accountId uint64, ticketId uint64) (*Ticket, error)
+	CreateTicket(ctx context.Context, accountId uint64, ticket *Ticket) (*Ticket, error)
+	UpdateTicket(ctx context.Context, ticketId uint64) (*Ticket, error)
 }
 
 type ticketDatabase struct {
 	db *gorm.DB
 }
 
-func (t ticketDatabase) GetMany(ctx context.Context, accountId, offset, limit uint64) ([]*Ticket, error) {
+func (t ticketDatabase) GetTickets(ctx context.Context, accountId, offset, limit uint64) ([]*Ticket, error) {
 	var tickets []*Ticket
 
 	res := t.db.
@@ -46,7 +46,7 @@ func (t ticketDatabase) GetMany(ctx context.Context, accountId, offset, limit ui
 	return tickets, nil
 }
 
-func (t ticketDatabase) GetOne(ctx context.Context, accountId uint64, ticketId uint64) (*Ticket, error) {
+func (t ticketDatabase) GetTicket(ctx context.Context, accountId uint64, ticketId uint64) (*Ticket, error) {
 	ticket := &Ticket{}
 
 	res := t.db.Model(ticket).Where("id = ?", ticketId).Where("account_id = ?", accountId).Preload("Event").First(ticket)
@@ -58,17 +58,17 @@ func (t ticketDatabase) GetOne(ctx context.Context, accountId uint64, ticketId u
 	return ticket, nil
 }
 
-func (t ticketDatabase) CreateOne(ctx context.Context, accountId uint64, ticket *Ticket) (*Ticket, error) {
+func (t ticketDatabase) CreateTicket(ctx context.Context, accountId uint64, ticket *Ticket) (*Ticket, error) {
 	res := t.db.Model(ticket).Create(ticket)
 
 	if res.Error != nil {
 		return nil, res.Error
 	}
 
-	return t.GetOne(ctx, accountId, ticket.ID)
+	return t.GetTicket(ctx, accountId, ticket.ID)
 }
 
-func (t ticketDatabase) UpdateOne(ctx context.Context, ticketId uint64) (*Ticket, error) {
+func (t ticketDatabase) UpdateTicket(ctx context.Context, ticketId uint64) (*Ticket, error) {
 	ticket := &Ticket{}
 	res := t.db.First(ticket, ticketId)
 	if res.Error != nil {

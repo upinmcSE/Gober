@@ -74,7 +74,7 @@ export default function TicketsScreen() {
                   } }
                 >
                   <HStack alignItems='center'>
-                    <Text fontSize={ 22 } bold >{ ticket.event.name }</Text>
+                    <Text fontSize={ 22 } bold >{ ticket.event.title }</Text>
                     <Text fontSize={ 22 } bold > | </Text>
                     <Text fontSize={ 16 } bold >{ ticket.event.location }</Text>
                   </HStack>

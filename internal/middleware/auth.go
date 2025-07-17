@@ -4,6 +4,7 @@ import (
 	"Gober/internal/service"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strconv"
 	"strings"
 )
 
@@ -21,9 +22,19 @@ func AuthMiddleware() gin.HandlerFunc {
 		tokenService := service.NewTokenService()
 		var valid, err = tokenService.ValidateToken(token)
 		if !valid || err != nil {
-			ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
+			ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token1"})
 			return
 		}
+
+		accountID, err := tokenService.ExtractAccountID(token)
+		if err != nil && accountID == "" {
+			ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token2"})
+			return
+		}
+
+		id, err := strconv.ParseUint(accountID, 10, 64)
+
+		ctx.Set("accountID", id)
 
 		ctx.Next()
 	}

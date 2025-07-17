@@ -1,5 +1,5 @@
-import { VStack } from '@/components/VStack';
 import { Text } from '@/components/Text';
+import { VStack } from '@/components/VStack';
 import { useOnScreenFocusCallback } from '@/hooks/useOnScreenFocusCallback';
 import { ticketService } from '@/services/tickets';
 import { Ticket } from '@/types/ticket';
@@ -48,7 +48,7 @@ export default function TicketDetailsScreen() {
         borderRadius: 20,
       } }
     >
-      <Text fontSize={ 50 } bold >{ ticketData.event.name }</Text>
+      <Text fontSize={ 50 } bold >{ ticketData.event.title }</Text>
       <Text fontSize={ 20 } bold >{ ticketData.event.location }</Text>
       <Text fontSize={ 16 } color='gray'>{ new Date(ticketData.event.date).toLocaleString() }</Text>
 

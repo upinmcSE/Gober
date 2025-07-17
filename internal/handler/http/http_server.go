@@ -99,15 +99,28 @@ func (h *httpServer) setupRouter() *gin.Engine {
 func (h *httpServer) setupRoutes(rg *gin.RouterGroup) {
 	client := gober.NewGoberServiceClient(h.conn)
 	accountHandler := NewAccountHandler(client)
+	eventHandler := NewEventHandler(client)
+	ticketHandler := NewTicketHandler(client)
 
 	account := rg.Group("/accounts")
 	account.POST("/create", accountHandler.CreateHandler)
 	account.POST("/session", accountHandler.CreateSessionHandler)
-	account.GET("/:id", accountHandler.GetAccountHandler)
+	account.GET("/:id", middleware.AuthMiddleware(), accountHandler.GetAccountHandler)
 
-	// Future routes
-	// event := rg.Group("/events")
-	// ticket := rg.Group("/tickets")
+	event := rg.Group("/events")
+	event.Use(middleware.AuthMiddleware())
+	event.POST("/create", eventHandler.CreateEventHandler)
+	event.GET("/:id", eventHandler.GetEventHandler)
+	event.GET("/", eventHandler.ListEventsHandler)
+	event.PATCH("/:id", eventHandler.UpdateEventHandler)
+	event.DELETE("/:id", eventHandler.DeleteEventHandler)
+
+	ticket := rg.Group("/tickets")
+	ticket.Use(middleware.AuthMiddleware())
+	ticket.POST("/create", ticketHandler.CreateTicketHandler)
+	ticket.GET("/:id", ticketHandler.GetTicketHandler)
+	ticket.GET("/", ticketHandler.ListTicketsHandler)
+	ticket.PATCH("/:id", ticketHandler.UpdateTicketHandler)
 }
 
 func (h *httpServer) shutdown() error {

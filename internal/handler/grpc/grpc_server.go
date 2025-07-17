@@ -6,6 +6,7 @@ import (
 	"Gober/internal/repo/mysql"
 	"Gober/internal/service"
 	"context"
+	"fmt"
 	"google.golang.org/grpc"
 	"log"
 	"net"
@@ -24,10 +25,9 @@ type grpcServer struct {
 }
 
 func (g *grpcServer) StartGRPCServer(ctx context.Context) error {
-
 	lis, err := net.Listen("tcp", ":"+g.config.Server.PortGrpc)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to listen on port %s: %w", g.config.Server.PortGrpc, err)
 	}
 
 	g.mu.Lock()
@@ -36,23 +36,33 @@ func (g *grpcServer) StartGRPCServer(ctx context.Context) error {
 
 	// Initialize dependencies
 	if err := g.initializeDependencies(); err != nil {
-		return err
+		return fmt.Errorf("failed to initialize dependencies: %w", err)
 	}
+
+	// Channel to capture server errors
+	serverErr := make(chan error, 1)
 
 	// Start server in goroutine
 	go func() {
-		log.Println("gRPC server listening at :8080")
+		log.Printf("gRPC server listening at :%s", g.config.Server.PortGrpc)
 		if err := g.server.Serve(lis); err != nil {
-			log.Printf("gRPC server error: %v", err)
+			serverErr <- fmt.Errorf("gRPC server serve error: %w", err)
 		}
 	}()
 
-	// Wait for context cancellation
-	<-ctx.Done()
+	// Wait for context cancellation or server error
+	select {
+	case <-ctx.Done():
+		log.Println("Context cancelled, shutting down gRPC server...")
+	case err := <-serverErr:
+		log.Printf("Server error: %v", err)
+		return err
+	}
 
 	// Graceful shutdown
 	g.mu.RLock()
 	if g.server != nil {
+		log.Println("Gracefully stopping gRPC server...")
 		g.server.GracefulStop()
 	}
 	g.mu.RUnlock()
@@ -61,30 +71,34 @@ func (g *grpcServer) StartGRPCServer(ctx context.Context) error {
 }
 
 func (g *grpcServer) initializeDependencies() error {
-
 	// Initialize database connection
 	db, err := mysql.InitDB(g.config)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to initialize database: %w", err)
 	}
 
 	// Initialize repository
 	accountRepo := mysql.NewAccountDatabase(db)
+	eventRepo := mysql.NewEventDatabase(db)
+	ticketRepo := mysql.NewTicketDatabase(db)
 
 	// Initialize services
 	hashService := service.NewHash()
 	tokenService := service.NewTokenService()
 	accountService := service.NewAccountService(accountRepo, tokenService, hashService)
+	eventService := service.NewEventService(eventRepo)
+	ticketService := service.NewTicketService(ticketRepo)
 
 	// Initialize handler
-	accountHandler, err := NewAccountHandler(accountService)
+	handler, err := NewGoberHandler(accountService, eventService, ticketService)
+
 	if err != nil {
 		return err
 	}
 
-	g.mu.RLock()
-	gober.RegisterGoberServiceServer(g.server, accountHandler)
-	g.mu.RUnlock()
+	g.mu.Lock()
+	gober.RegisterGoberServiceServer(g.server, handler)
+	g.mu.Unlock()
 
 	return nil
 }

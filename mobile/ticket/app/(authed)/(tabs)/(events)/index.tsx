@@ -8,9 +8,9 @@ import { useAuth } from '@/context/AuthContext';
 import { useOnScreenFocusCallback } from '@/hooks/useOnScreenFocusCallback';
 import { eventService } from '@/services/events';
 import { ticketService } from '@/services/tickets';
-import { Event } from '@/types/event';
+import { EventListData } from '@/types/event';
 import { UserRole } from '@/types/user';
-import { useNavigation, router } from 'expo-router';
+import { router, useNavigation } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import { Alert, FlatList, TouchableOpacity } from 'react-native';
 
@@ -19,7 +19,7 @@ export default function EventsScreen() {
   const navigation = useNavigation();
 
   const [isLoading, setIsLoading] = useState(false);
-  const [events, setEvents] = useState<Event[]>([]);
+  const [events, setEvents] = useState<EventListData>();
 
   function onGoToEventPage(id: number) {
     if (user?.role === UserRole.Manager) {
@@ -62,12 +62,12 @@ export default function EventsScreen() {
     <VStack flex={ 1 } p={ 20 } pb={ 0 } gap={ 20 }>
 
       <HStack alignItems='center' justifyContent='space-between'>
-        <Text fontSize={ 18 } bold>{ events.length } Events</Text>
+        <Text fontSize={ 18 } bold>{ events?.events.length } Events</Text>
       </HStack>
 
       <FlatList
-        keyExtractor={ (item) => item.id.toString() }
-        data={ events }
+        keyExtractor={ (item) => item.event_id.toString() }
+        data={ events?.events }
         onRefresh={ fetchEvents }
         refreshing={ isLoading }
         renderItem={ ({ item: event }) => (
@@ -78,12 +78,12 @@ export default function EventsScreen() {
               backgroundColor: 'white',
               borderRadius: 20,
             }} 
-            key={ event.id }>
+            key={ event.event_id }>
 
-            <TouchableOpacity onPress={ () => onGoToEventPage(event.id) }>
+            <TouchableOpacity onPress={ () => onGoToEventPage(event.event_id) }>
               <HStack alignItems='center' justifyContent="space-between">
                 <HStack alignItems='center'>
-                  <Text fontSize={ 26 } bold >{ event.name }</Text>
+                  <Text fontSize={ 26 } bold >{ event.title }</Text>
                   <Text fontSize={ 26 } bold > | </Text>
                   <Text fontSize={ 16 } bold >{ event.location }</Text>
                 </HStack>
@@ -95,17 +95,17 @@ export default function EventsScreen() {
 
             <HStack justifyContent='space-between'>
 
-              <VStack gap={ 10 }>
+              {/* <VStack gap={ 10 }>
                 <Text bold fontSize={ 16 } color='gray'>Sold: { event.totalTicketsPurchased }</Text>
                 <Text bold fontSize={ 16 } color='green'>Entered: { event.totalTicketsEntered }</Text>
-              </VStack>
+              </VStack> */}
 
               { user?.role === UserRole.Attendee && (
                 <VStack>
                   <Button
                     variant='outlined'
                     disabled={ isLoading }
-                    onPress={ () => buyTicket(event.id) }
+                    onPress={ () => buyTicket(event.event_id) }
                   >
                     Buy Ticket
                   </Button>

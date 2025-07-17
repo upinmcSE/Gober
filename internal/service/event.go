@@ -15,19 +15,20 @@ type CreateEventParams struct {
 }
 
 type EventService interface {
-	GetMany(ctx context.Context, offset uint64, limit uint64) ([]*mysql.Event, error)
-	GetOne(ctx context.Context, eventId uint64) (*mysql.Event, error)
-	CreateOne(ctx context.Context, event CreateEventParams) (*mysql.Event, error)
-	UpdateOne(ctx context.Context, eventId uint64, updateData map[string]interface{}) (*mysql.Event, error)
-	DeleteOne(ctx context.Context, eventId uint64) error
+	GetEvents(ctx context.Context, offset uint64, limit uint64) ([]*mysql.Event, error)
+	GetEvent(ctx context.Context, eventId uint64) (*mysql.Event, error)
+	CreateEvent(ctx context.Context, event CreateEventParams) (*mysql.Event, error)
+	UpdateEvent(ctx context.Context, eventId uint64, updateData map[string]interface{}) (*mysql.Event, error)
+	DeleteEvent(ctx context.Context, eventId uint64) error
 }
 
 type eventService struct {
 	db mysql.EventDatabase
 }
 
-func (e eventService) GetMany(ctx context.Context, offset uint64, limit uint64) ([]*mysql.Event, error) {
-	events, err := e.db.GetMany(ctx)
+func (e eventService) GetEvents(ctx context.Context, offset uint64, limit uint64) ([]*mysql.Event, error) {
+	events, err := e.db.GetEvents(ctx)
+
 	if err != nil {
 		return nil, status.Error(codes.DataLoss, "Không thể lấy danh sách sự kiện")
 	}
@@ -36,16 +37,11 @@ func (e eventService) GetMany(ctx context.Context, offset uint64, limit uint64) 
 		return []*mysql.Event{}, status.Error(codes.InvalidArgument, "Số lượng sự kiện yêu cầu vượt quá tổng số sự kiện hiện có")
 	}
 
-	end := offset + limit
-	if end > uint64(len(events)) {
-		end = uint64(len(events))
-	}
-
-	return events[offset:end], nil
+	return events, nil
 }
 
-func (e eventService) GetOne(ctx context.Context, eventId uint64) (*mysql.Event, error) {
-	event, err := e.db.GetOne(ctx, eventId)
+func (e eventService) GetEvent(ctx context.Context, eventId uint64) (*mysql.Event, error) {
+	event, err := e.db.GetEvent(ctx, eventId)
 	if err != nil {
 		return nil, status.Error(codes.NotFound, "Không tìm thấy sự kiện với ID đã cho")
 	}
@@ -53,14 +49,14 @@ func (e eventService) GetOne(ctx context.Context, eventId uint64) (*mysql.Event,
 	return event, nil
 }
 
-func (e eventService) CreateOne(ctx context.Context, event CreateEventParams) (*mysql.Event, error) {
+func (e eventService) CreateEvent(ctx context.Context, event CreateEventParams) (*mysql.Event, error) {
 	newEvent := &mysql.Event{
 		Title:    event.Title,
 		Location: event.Location,
 		Date:     event.Date,
 	}
 
-	createdEvent, err := e.db.CreateOne(ctx, newEvent)
+	createdEvent, err := e.db.CreateEvent(ctx, newEvent)
 	if err != nil {
 		return nil, status.Error(codes.DataLoss, "Không thể tạo sự kiện mới")
 	}
@@ -68,8 +64,8 @@ func (e eventService) CreateOne(ctx context.Context, event CreateEventParams) (*
 	return createdEvent, nil
 }
 
-func (e eventService) UpdateOne(ctx context.Context, eventId uint64, updateData map[string]interface{}) (*mysql.Event, error) {
-	event, err := e.db.UpdateOne(ctx, eventId, updateData)
+func (e eventService) UpdateEvent(ctx context.Context, eventId uint64, updateData map[string]interface{}) (*mysql.Event, error) {
+	event, err := e.db.UpdateEvent(ctx, eventId, updateData)
 	if err != nil {
 		return nil, status.Error(codes.DataLoss, "Không thể cập nhật sự kiện")
 	}
@@ -81,8 +77,8 @@ func (e eventService) UpdateOne(ctx context.Context, eventId uint64, updateData 
 	return event, nil
 }
 
-func (e eventService) DeleteOne(ctx context.Context, eventId uint64) error {
-	err := e.db.DeleteOne(ctx, eventId)
+func (e eventService) DeleteEvent(ctx context.Context, eventId uint64) error {
+	err := e.db.DeleteEvent(ctx, eventId)
 	if err != nil {
 		return status.Error(codes.DataLoss, "Không thể xóa sự kiện")
 	}

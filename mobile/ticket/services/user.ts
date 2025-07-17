@@ -2,7 +2,7 @@ import { AuthResponse } from "@/types/user";
 import { Api } from "./api";
 
 async function login(email: string, password: string): Promise<AuthResponse> {
-  return Api.post("/accounts/login", { email, password });
+  return Api.post("/accounts/session", { email, password });
 }
 
 async function register(email: string, password: string): Promise<AuthResponse> {

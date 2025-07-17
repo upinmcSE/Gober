@@ -2,6 +2,7 @@ package mysql
 
 import (
 	"context"
+	"fmt"
 	"gorm.io/gorm"
 	"time"
 )
@@ -18,30 +19,35 @@ type Event struct {
 }
 
 type EventDatabase interface {
-	GetMany(ctx context.Context) ([]*Event, error)
-	GetOne(ctx context.Context, eventId uint64) (*Event, error)
-	CreateOne(ctx context.Context, event *Event) (*Event, error)
-	UpdateOne(ctx context.Context, eventId uint64, updateData map[string]interface{}) (*Event, error)
-	DeleteOne(ctx context.Context, eventId uint64) error
+	GetEvents(ctx context.Context) ([]*Event, error)
+	GetEvent(ctx context.Context, eventId uint64) (*Event, error)
+	CreateEvent(ctx context.Context, event *Event) (*Event, error)
+	UpdateEvent(ctx context.Context, eventId uint64, updateData map[string]interface{}) (*Event, error)
+	DeleteEvent(ctx context.Context, eventId uint64) error
 }
 
 type eventDatabase struct {
 	db *gorm.DB
 }
 
-func (e eventDatabase) GetMany(ctx context.Context) ([]*Event, error) {
+func (e eventDatabase) GetEvents(ctx context.Context) ([]*Event, error) {
 	var events []*Event
 
-	res := e.db.Model(&Event{}).Order("updated_at desc").Find(&events)
+	res := e.db.Model(&Event{}).Order("created_at desc").Find(&events)
 
 	if res.Error != nil {
 		return nil, res.Error
 	}
 
+	fmt.Println(events)
+
+	if res.RowsAffected == 0 {
+		return []*Event{}, nil
+	}
 	return events, nil
 }
 
-func (e eventDatabase) GetOne(ctx context.Context, eventId uint64) (*Event, error) {
+func (e eventDatabase) GetEvent(ctx context.Context, eventId uint64) (*Event, error) {
 	event := &Event{}
 
 	res := e.db.Model(event).Where("id = ?", eventId).First(event)
@@ -53,7 +59,7 @@ func (e eventDatabase) GetOne(ctx context.Context, eventId uint64) (*Event, erro
 	return event, nil
 }
 
-func (e eventDatabase) CreateOne(ctx context.Context, event *Event) (*Event, error) {
+func (e eventDatabase) CreateEvent(ctx context.Context, event *Event) (*Event, error) {
 	res := e.db.Model(event).Create(event)
 
 	if res.Error != nil {
@@ -63,7 +69,7 @@ func (e eventDatabase) CreateOne(ctx context.Context, event *Event) (*Event, err
 	return event, nil
 }
 
-func (e eventDatabase) UpdateOne(ctx context.Context, eventId uint64, updateData map[string]interface{}) (*Event, error) {
+func (e eventDatabase) UpdateEvent(ctx context.Context, eventId uint64, updateData map[string]interface{}) (*Event, error) {
 	event := new(Event)
 
 	updateRes := e.db.WithContext(ctx).Where("id = ?", eventId).Updates(updateData)
@@ -81,7 +87,7 @@ func (e eventDatabase) UpdateOne(ctx context.Context, eventId uint64, updateData
 	return event, nil
 }
 
-func (e eventDatabase) DeleteOne(ctx context.Context, eventId uint64) error {
+func (e eventDatabase) DeleteEvent(ctx context.Context, eventId uint64) error {
 	res := e.db.Delete(&Event{}, eventId)
 	if res.Error != nil {
 		return res.Error

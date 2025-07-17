@@ -1,21 +1,21 @@
-import { Api } from "./api";
-import { Ticket, TicketResponse } from "@/types/ticket";
 import { ApiResponse } from "@/types/api";
+import { Ticket, TicketResponse } from "@/types/ticket";
+import { Api } from "./api";
 
 async function createOne(eventId: number): Promise<TicketResponse> {
-  return Api.post("/ticket", { eventId });
+  return Api.post("/tickets", { eventId });
 }
 
 async function getOne(id: number): Promise<ApiResponse<{ticket: Ticket, qrcode: string}>> {
-  return Api.get(`/ticket/${id}`);
+  return Api.get(`/tickets/${id}`);
 }
 
 async function getAll(): Promise<ApiResponse<Ticket[]>> {
-  return Api.get("/ticket");
+  return Api.get("/tickets?offset=0&limit=10");
 }
 
 async function validateOne(ticketId: number, ownerId: number): Promise<ApiResponse<Ticket>> {
-  return Api.post("/ticket/validate/", { ticketId, ownerId });
+  return Api.post("/tickets/validate/", { ticketId, ownerId });
 }
 
 const ticketService = {
@@ -26,3 +26,4 @@ const ticketService = {
 };
 
 export { ticketService };
+

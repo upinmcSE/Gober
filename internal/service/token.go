@@ -23,6 +23,28 @@ type TokenService interface {
 	GenerateToken(claims *mysql.Account) (string, error)
 	ValidateToken(token string) (bool, error)
 	ExtractEmail(token string) (string, error)
+	ExtractAccountID(token string) (string, error)
+}
+
+func (t *tokenService) ExtractAccountID(tokenString string) (string, error) {
+	config := configs.GetConfig()
+	if config == nil {
+		return "", status.Error(codes.Internal, "Configuration not found")
+	}
+
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		return []byte(config.Security.SecretKey), nil
+	})
+
+	if err != nil {
+		return "", status.Error(codes.Unauthenticated, "Token is invalid")
+	}
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok {
+		return "", status.Error(codes.Internal, "Lỗi server")
+	}
+
+	return fmt.Sprintf("%v", claims["id"]), nil
 }
 
 // GenerateToken implements TokenService.
@@ -48,23 +70,20 @@ func (t *tokenService) GenerateToken(account *mysql.Account) (string, error) {
 func (t *tokenService) ValidateToken(tokenString string) (bool, error) {
 	config := configs.GetConfig()
 
-	if config == nil {
-		return false, errors.New("configuration not found")
-	}
-
-	token, err := jwt.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (interface{}, error) {
-		return []byte(config.Security.SecretKey), status.Error(codes.Unauthenticated, "Token is invalid")
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		return []byte(config.Security.SecretKey), nil
 	})
 
-	if claims, ok := token.Claims.(*Claims); ok {
-		fmt.Println("Token exp:", claims.ExpiresAt)
+	if err != nil {
+		return false, err
 	}
 
-	if err != nil || !token.Valid {
-		return false, status.Error(codes.Unauthenticated, "Token is invalid")
+	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+		fmt.Println("Token claims:", claims)
+		return true, nil
 	}
 
-	return true, nil
+	return false, errors.New("invalid token")
 }
 
 // ExtractEmail implements TokenService.

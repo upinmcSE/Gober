@@ -1,15 +1,20 @@
 import { ApiResponse } from "./api";
 
 export type EventResponse = ApiResponse<Event>;
-export type EventListResponse = ApiResponse<Event[]>;
+export type EventListResponse = ApiResponse<EventListData>;
 
 export type Event = {
-  id: number;
-  name: string;
+  event_id: number;
+  title: string;
   location: string;
-  totalTicketsPurchased: number;
-  totalTicketsEntered: number;
+  // totalTicketsPurchased: number;
+  // totalTicketsEntered: number;
   date: string;
-  createdAt: string;
-  updatedAt: string;
+  created_at: string;
+  updated_at: string;
 }
+
+export type EventListData = {
+  events: Event[];
+  total_event_count: number;
+};
