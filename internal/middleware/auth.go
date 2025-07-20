@@ -1,12 +1,22 @@
 package middleware
 
 import (
-	"Gober/internal/service"
+	"Gober/pkg/cache"
+	"Gober/pkg/jwt"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"strconv"
 	"strings"
 )
+
+var (
+	jwtService   jwt.TokenService
+	cacheService cache.RedisCacheService
+)
+
+func InitAuthMiddleware(token jwt.TokenService, cache cache.RedisCacheService) {
+	jwtService = token
+	cacheService = cache
+}
 
 func AuthMiddleware() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
@@ -19,22 +29,39 @@ func AuthMiddleware() gin.HandlerFunc {
 			token = strings.TrimPrefix(token, "Bearer ")
 		}
 
-		tokenService := service.NewTokenService()
-		var valid, err = tokenService.ValidateToken(token)
-		if !valid || err != nil {
-			ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token1"})
+		_, claims, err := jwtService.ParseToken(token)
+		if err != nil {
+			ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+				"error": "Authorization header missing or invalid",
+			})
+
 			return
 		}
 
-		accountID, err := tokenService.ExtractAccountID(token)
-		if err != nil && accountID == "" {
-			ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token2"})
+		if jti, ok := claims["jti"].(string); ok {
+			key := "blacklist:" + jti
+			exists, err := cacheService.Exists(key)
+			if err == nil && exists {
+				ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+					"error": "Token revoked",
+				})
+
+				return
+			}
+		}
+
+		payload, err := jwtService.DecryptAccessTokenPayload(token)
+		if err != nil {
+			ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+				"error": "Authorization header missing or invalid",
+			})
+
 			return
 		}
 
-		id, err := strconv.ParseUint(accountID, 10, 64)
-
-		ctx.Set("accountID", id)
+		ctx.Set("accountID", payload.AccountID)
+		ctx.Set("email", payload.Email)
+		ctx.Set("role", payload.Role)
 
 		ctx.Next()
 	}

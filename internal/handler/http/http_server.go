@@ -4,9 +4,10 @@ import (
 	"Gober/configs"
 	"Gober/internal/generated/grpc/gober"
 	"Gober/internal/middleware"
+	"Gober/pkg/cache"
+	"Gober/pkg/jwt"
 	"Gober/pkg/logger"
 	"context"
-	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -24,6 +25,8 @@ type httpServer struct {
 	config *configs.Config
 	server *http.Server
 	conn   *grpc.ClientConn
+	cache  cache.RedisCacheService
+	token  jwt.TokenService
 	mu     sync.RWMutex
 }
 
@@ -81,13 +84,16 @@ func (h *httpServer) setupRouter() *gin.Engine {
 	httpLogger := logger.NewLoggerWithPath("logs/http.log", "info")
 	rateLimiterLogger := logger.NewLoggerWithPath("logs/rate_limiter.log", "warning")
 
+	// Initialize middleware
+	middleware.InitAuthMiddleware(h.token, h.cache)
+
 	// Apply middleware
 	v1.Use(
 		middleware.ApikeyMiddleware(),
 		middleware.CORSMiddleware(),
 		middleware.LoggerMiddleware(httpLogger),
 		middleware.RateLimiterMiddleware(rateLimiterLogger),
-		gzip.Gzip(gzip.BestCompression),
+		//gzip.Gzip(gzip.BestCompression),
 	)
 
 	// Setup routes
@@ -105,7 +111,9 @@ func (h *httpServer) setupRoutes(rg *gin.RouterGroup) {
 	account := rg.Group("/accounts")
 	account.POST("/create", accountHandler.CreateHandler)
 	account.POST("/session", accountHandler.CreateSessionHandler)
+	account.POST("/refresh", accountHandler.RefreshSessionHandler)
 	account.GET("/:id", middleware.AuthMiddleware(), accountHandler.GetAccountHandler)
+	account.DELETE("/delete-session", middleware.AuthMiddleware(), accountHandler.DeleteSessionHandler)
 
 	event := rg.Group("/events")
 	event.Use(middleware.AuthMiddleware())
@@ -148,8 +156,10 @@ func (h *httpServer) shutdown() error {
 	return nil
 }
 
-func NewHTTPServer(config *configs.Config) HTTPServer {
+func NewHTTPServer(config *configs.Config, cache cache.RedisCacheService, token jwt.TokenService) HTTPServer {
 	return &httpServer{
 		config: config,
+		cache:  cache,
+		token:  token,
 	}
 }

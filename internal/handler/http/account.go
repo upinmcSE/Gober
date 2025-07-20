@@ -32,7 +32,6 @@ func (ah *AccountHandler) CreateSessionHandler(c *gin.Context) {
 }
 
 func (ah *AccountHandler) CreateHandler(c *gin.Context) {
-
 	var req gober.CreateAccountRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		response.ResponseError(c, 400, &response.AppError{
@@ -50,6 +49,25 @@ func (ah *AccountHandler) CreateHandler(c *gin.Context) {
 
 	response.ResponseSuccess(c, 201, "Account created successfully", resp)
 
+}
+
+func (ah *AccountHandler) RefreshSessionHandler(c *gin.Context) {
+	var req gober.RefreshSessionRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		response.ResponseError(c, 400, &response.AppError{
+			Message: "Invalid request",
+			Code:    response.ErrCodeBadRequest,
+		})
+		return
+	}
+
+	resp, err := ah.client.RefreshSession(c, &req)
+	if err != nil {
+		response.HandleGrpcError(c, err)
+		return
+	}
+
+	response.ResponseSuccess(c, 200, "Session refreshed successfully", resp)
 }
 
 func (ah *AccountHandler) GetAccountHandler(c *gin.Context) {
@@ -72,6 +90,25 @@ func (ah *AccountHandler) GetAccountHandler(c *gin.Context) {
 	}
 
 	response.ResponseSuccess(c, 200, "Account retrieved", resp)
+}
+
+func (ah *AccountHandler) DeleteSessionHandler(c *gin.Context) {
+	var req gober.DeleteSessionRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		response.ResponseError(c, 400, &response.AppError{
+			Message: "Invalid request",
+			Code:    response.ErrCodeBadRequest,
+		})
+		return
+	}
+
+	resp, err := ah.client.DeleteSession(c, &req)
+	if err != nil {
+		response.HandleGrpcError(c, err)
+		return
+	}
+
+	response.ResponseSuccess(c, 200, "Session deleted successfully", resp)
 }
 
 func NewAccountHandler(client gober.GoberServiceClient) *AccountHandler {

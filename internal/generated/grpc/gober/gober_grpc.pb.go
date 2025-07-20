@@ -19,18 +19,20 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	GoberService_CreateAccount_FullMethodName = "/api.GoberService/CreateAccount"
-	GoberService_CreateSession_FullMethodName = "/api.GoberService/CreateSession"
-	GoberService_GetAccount_FullMethodName    = "/api.GoberService/GetAccount"
-	GoberService_CreateEvent_FullMethodName   = "/api.GoberService/CreateEvent"
-	GoberService_UpdateEvent_FullMethodName   = "/api.GoberService/UpdateEvent"
-	GoberService_DeleteEvent_FullMethodName   = "/api.GoberService/DeleteEvent"
-	GoberService_GetEvent_FullMethodName      = "/api.GoberService/GetEvent"
-	GoberService_GetEvents_FullMethodName     = "/api.GoberService/GetEvents"
-	GoberService_CreateTicket_FullMethodName  = "/api.GoberService/CreateTicket"
-	GoberService_UpdateTicket_FullMethodName  = "/api.GoberService/UpdateTicket"
-	GoberService_GetTicket_FullMethodName     = "/api.GoberService/GetTicket"
-	GoberService_GetTickets_FullMethodName    = "/api.GoberService/GetTickets"
+	GoberService_CreateAccount_FullMethodName  = "/api.GoberService/CreateAccount"
+	GoberService_CreateSession_FullMethodName  = "/api.GoberService/CreateSession"
+	GoberService_RefreshSession_FullMethodName = "/api.GoberService/RefreshSession"
+	GoberService_GetAccount_FullMethodName     = "/api.GoberService/GetAccount"
+	GoberService_DeleteSession_FullMethodName  = "/api.GoberService/DeleteSession"
+	GoberService_CreateEvent_FullMethodName    = "/api.GoberService/CreateEvent"
+	GoberService_UpdateEvent_FullMethodName    = "/api.GoberService/UpdateEvent"
+	GoberService_DeleteEvent_FullMethodName    = "/api.GoberService/DeleteEvent"
+	GoberService_GetEvent_FullMethodName       = "/api.GoberService/GetEvent"
+	GoberService_GetEvents_FullMethodName      = "/api.GoberService/GetEvents"
+	GoberService_CreateTicket_FullMethodName   = "/api.GoberService/CreateTicket"
+	GoberService_UpdateTicket_FullMethodName   = "/api.GoberService/UpdateTicket"
+	GoberService_GetTicket_FullMethodName      = "/api.GoberService/GetTicket"
+	GoberService_GetTickets_FullMethodName     = "/api.GoberService/GetTickets"
 )
 
 // GoberServiceClient is the client API for GoberService service.
@@ -39,7 +41,9 @@ const (
 type GoberServiceClient interface {
 	CreateAccount(ctx context.Context, in *CreateAccountRequest, opts ...grpc.CallOption) (*CreateAccountResponse, error)
 	CreateSession(ctx context.Context, in *CreateSessionRequest, opts ...grpc.CallOption) (*CreateSessionResponse, error)
+	RefreshSession(ctx context.Context, in *RefreshSessionRequest, opts ...grpc.CallOption) (*RefreshSessionResponse, error)
 	GetAccount(ctx context.Context, in *GetAccountRequest, opts ...grpc.CallOption) (*GetAccountResponse, error)
+	DeleteSession(ctx context.Context, in *DeleteSessionRequest, opts ...grpc.CallOption) (*DeleteSessionResponse, error)
 	CreateEvent(ctx context.Context, in *CreateEventRequest, opts ...grpc.CallOption) (*CreateEventResponse, error)
 	UpdateEvent(ctx context.Context, in *UpdateEventRequest, opts ...grpc.CallOption) (*UpdateEventResponse, error)
 	DeleteEvent(ctx context.Context, in *DeleteEventRequest, opts ...grpc.CallOption) (*DeleteEventResponse, error)
@@ -79,10 +83,30 @@ func (c *goberServiceClient) CreateSession(ctx context.Context, in *CreateSessio
 	return out, nil
 }
 
+func (c *goberServiceClient) RefreshSession(ctx context.Context, in *RefreshSessionRequest, opts ...grpc.CallOption) (*RefreshSessionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RefreshSessionResponse)
+	err := c.cc.Invoke(ctx, GoberService_RefreshSession_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *goberServiceClient) GetAccount(ctx context.Context, in *GetAccountRequest, opts ...grpc.CallOption) (*GetAccountResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetAccountResponse)
 	err := c.cc.Invoke(ctx, GoberService_GetAccount_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *goberServiceClient) DeleteSession(ctx context.Context, in *DeleteSessionRequest, opts ...grpc.CallOption) (*DeleteSessionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteSessionResponse)
+	err := c.cc.Invoke(ctx, GoberService_DeleteSession_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -185,7 +209,9 @@ func (c *goberServiceClient) GetTickets(ctx context.Context, in *ListTicketsRequ
 type GoberServiceServer interface {
 	CreateAccount(context.Context, *CreateAccountRequest) (*CreateAccountResponse, error)
 	CreateSession(context.Context, *CreateSessionRequest) (*CreateSessionResponse, error)
+	RefreshSession(context.Context, *RefreshSessionRequest) (*RefreshSessionResponse, error)
 	GetAccount(context.Context, *GetAccountRequest) (*GetAccountResponse, error)
+	DeleteSession(context.Context, *DeleteSessionRequest) (*DeleteSessionResponse, error)
 	CreateEvent(context.Context, *CreateEventRequest) (*CreateEventResponse, error)
 	UpdateEvent(context.Context, *UpdateEventRequest) (*UpdateEventResponse, error)
 	DeleteEvent(context.Context, *DeleteEventRequest) (*DeleteEventResponse, error)
@@ -211,8 +237,14 @@ func (UnimplementedGoberServiceServer) CreateAccount(context.Context, *CreateAcc
 func (UnimplementedGoberServiceServer) CreateSession(context.Context, *CreateSessionRequest) (*CreateSessionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateSession not implemented")
 }
+func (UnimplementedGoberServiceServer) RefreshSession(context.Context, *RefreshSessionRequest) (*RefreshSessionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RefreshSession not implemented")
+}
 func (UnimplementedGoberServiceServer) GetAccount(context.Context, *GetAccountRequest) (*GetAccountResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAccount not implemented")
+}
+func (UnimplementedGoberServiceServer) DeleteSession(context.Context, *DeleteSessionRequest) (*DeleteSessionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteSession not implemented")
 }
 func (UnimplementedGoberServiceServer) CreateEvent(context.Context, *CreateEventRequest) (*CreateEventResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateEvent not implemented")
@@ -298,6 +330,24 @@ func _GoberService_CreateSession_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _GoberService_RefreshSession_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RefreshSessionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GoberServiceServer).RefreshSession(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: GoberService_RefreshSession_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GoberServiceServer).RefreshSession(ctx, req.(*RefreshSessionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _GoberService_GetAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetAccountRequest)
 	if err := dec(in); err != nil {
@@ -312,6 +362,24 @@ func _GoberService_GetAccount_Handler(srv interface{}, ctx context.Context, dec 
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(GoberServiceServer).GetAccount(ctx, req.(*GetAccountRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GoberService_DeleteSession_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteSessionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GoberServiceServer).DeleteSession(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: GoberService_DeleteSession_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GoberServiceServer).DeleteSession(ctx, req.(*DeleteSessionRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -494,8 +562,16 @@ var GoberService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _GoberService_CreateSession_Handler,
 		},
 		{
+			MethodName: "RefreshSession",
+			Handler:    _GoberService_RefreshSession_Handler,
+		},
+		{
 			MethodName: "GetAccount",
 			Handler:    _GoberService_GetAccount_Handler,
+		},
+		{
+			MethodName: "DeleteSession",
+			Handler:    _GoberService_DeleteSession_Handler,
 		},
 		{
 			MethodName: "CreateEvent",

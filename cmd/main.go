@@ -4,6 +4,8 @@ import (
 	configs2 "Gober/configs"
 	"Gober/internal/handler/grpc"
 	"Gober/internal/handler/http"
+	redis "Gober/pkg/cache"
+	"Gober/pkg/jwt"
 	"context"
 	"log"
 	"os"
@@ -18,6 +20,12 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to load configuration: %v", err)
 	}
+
+	cache := redis.NewRedisClient(&config)
+	cacheService := redis.NewRedisCacheService(cache)
+
+	token := jwt.NewTokenService(cacheService, &config)
+
 	// Create context for graceful shutdown
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -34,7 +42,7 @@ func main() {
 	}
 
 	// Start gRPC server
-	grpcServer := grpc.NewGRPCServer(&config)
+	grpcServer := grpc.NewGRPCServer(&config, cacheService, token)
 	go func() {
 		if err := grpcServer.StartGRPCServer(ctx); err != nil {
 			errChan <- err
@@ -45,7 +53,7 @@ func main() {
 	time.Sleep(2 * time.Second)
 
 	// Start HTTP server
-	httpServer := http.NewHTTPServer(&config)
+	httpServer := http.NewHTTPServer(&config, cacheService, token)
 	go func() {
 		if err := httpServer.StartHTTPServer(ctx); err != nil {
 			errChan <- err

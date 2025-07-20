@@ -43,10 +43,27 @@ func (h *GoberHandler) CreateSession(ctx context.Context, req *gober.CreateSessi
 	if err != nil {
 		return nil, err
 	}
+	fmt.Println("ouput:", output.Account)
+	fmt.Println("ouput:", output.AccessToken)
+	fmt.Println("ouput:", output.RefreshToken)
 
 	return &gober.CreateSessionResponse{
-		OfAccount: output.Account,
-		Token:     output.Token,
+		OfAccount:    output.Account,
+		AccessToken:  output.AccessToken,
+		RefreshToken: output.RefreshToken,
+	}, nil
+}
+
+func (h *GoberHandler) RefreshSession(ctx context.Context, req *gober.RefreshSessionRequest) (*gober.RefreshSessionResponse, error) {
+	output, err := h.AccountService.RefreshSession(ctx, req.RefreshToken)
+	if err != nil {
+		return nil, err
+	}
+
+	return &gober.RefreshSessionResponse{
+		OfAccount:    output.Account,
+		AccessToken:  output.AccessToken,
+		RefreshToken: output.RefreshToken,
 	}, nil
 }
 
@@ -59,6 +76,14 @@ func (h *GoberHandler) GetAccount(ctx context.Context, req *gober.GetAccountRequ
 	return &gober.GetAccountResponse{
 		OfAccount: account,
 	}, nil
+}
+
+func (h *GoberHandler) DeleteSession(ctx context.Context, req *gober.DeleteSessionRequest) (*gober.DeleteSessionResponse, error) {
+	if err := h.AccountService.DeleteSession(ctx, req.AccessToken, req.RefreshToken); err != nil {
+		return nil, err
+	}
+
+	return &gober.DeleteSessionResponse{}, nil
 }
 
 func (h *GoberHandler) GetEvents(ctx context.Context, req *gober.ListEventsRequest) (*gober.ListEventsResponse, error) {

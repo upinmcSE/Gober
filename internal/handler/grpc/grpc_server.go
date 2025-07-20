@@ -5,6 +5,8 @@ import (
 	"Gober/internal/generated/grpc/gober"
 	"Gober/internal/repo/mysql"
 	"Gober/internal/service"
+	"Gober/pkg/cache"
+	"Gober/pkg/jwt"
 	"context"
 	"fmt"
 	"google.golang.org/grpc"
@@ -21,6 +23,8 @@ type grpcServer struct {
 	config  *configs.Config
 	handler gober.GoberServiceServer
 	server  *grpc.Server
+	cache   cache.RedisCacheService
+	token   jwt.TokenService
 	mu      sync.RWMutex
 }
 
@@ -84,8 +88,7 @@ func (g *grpcServer) initializeDependencies() error {
 
 	// Initialize services
 	hashService := service.NewHash()
-	tokenService := service.NewTokenService()
-	accountService := service.NewAccountService(accountRepo, tokenService, hashService)
+	accountService := service.NewAccountService(accountRepo, g.token, hashService, g.cache)
 	eventService := service.NewEventService(eventRepo)
 	ticketService := service.NewTicketService(ticketRepo)
 
@@ -103,8 +106,10 @@ func (g *grpcServer) initializeDependencies() error {
 	return nil
 }
 
-func NewGRPCServer(config *configs.Config) GRPCServer {
+func NewGRPCServer(config *configs.Config, cache cache.RedisCacheService, token jwt.TokenService) GRPCServer {
 	return &grpcServer{
 		config: config,
+		cache:  cache,
+		token:  token,
 	}
 }

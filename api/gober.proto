@@ -7,7 +7,9 @@ option go_package = "/grpc/gober";
 service GoberService {
     rpc CreateAccount(CreateAccountRequest) returns (CreateAccountResponse);
     rpc CreateSession(CreateSessionRequest) returns (CreateSessionResponse);
+    rpc RefreshSession(RefreshSessionRequest) returns (RefreshSessionResponse);
     rpc GetAccount(GetAccountRequest) returns (GetAccountResponse);
+    rpc DeleteSession(DeleteSessionRequest) returns (DeleteSessionResponse);
     rpc CreateEvent(CreateEventRequest) returns (CreateEventResponse);
     rpc UpdateEvent(UpdateEventRequest) returns (UpdateEventResponse);
     rpc DeleteEvent(DeleteEventRequest) returns (DeleteEventResponse);
@@ -70,7 +72,18 @@ message CreateSessionRequest {
 
 message CreateSessionResponse {
     Account of_account = 1;
-    string token = 2;
+    string access_token = 2;
+    string refresh_token = 3;
+}
+
+message RefreshSessionRequest {
+    string refresh_token = 1;
+}
+
+message RefreshSessionResponse {
+    Account of_account = 1;
+    string access_token = 2;
+    string refresh_token = 3;
 }
 
 message GetAccountRequest {
@@ -80,6 +93,13 @@ message GetAccountRequest {
 message GetAccountResponse {
     Account of_account = 1;
 }
+
+message DeleteSessionRequest {
+    string access_token = 1;
+    string refresh_token = 2;
+}
+
+message DeleteSessionResponse {}
 
 message CreateEventRequest {
     EventUpdate event_update = 1;

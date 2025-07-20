@@ -29,9 +29,14 @@ type ServerConfig struct {
 	RateLimit RateLimitConfig
 }
 
+type Expiration struct {
+	AccessToken  int64
+	RefreshToken int64
+}
+
 type SecurityConfig struct {
 	SecretKey  string
-	Expiration int64
+	Expiration Expiration
 }
 
 type DatabaseConfig struct {
