@@ -1,8 +1,8 @@
 import { userService } from '@/services/user';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { useEffect, useState } from 'react';
-import { router } from 'expo-router';
 import { User } from '@/types/user';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { router } from 'expo-router';
+import React, { useEffect, useState } from 'react';
 
 interface AuthContextProps {
   isLoggedIn: boolean;
@@ -25,10 +25,10 @@ export function AuthenticationProvider({ children }: React.PropsWithChildren) {
 
   useEffect(() => {
     async function checkIfLoggedIn() {
-      const token = await AsyncStorage.getItem('token');
+      const token = await AsyncStorage.getItem('accessToken');
       const user = await AsyncStorage.getItem('user');
 
-      console.log("Checking if user is logged in", { token, user });
+      //console.log("Checking if user is logged in", { token, user });
 
       if (token && user) {
         setIsLoggedIn(true);
@@ -53,14 +53,16 @@ export function AuthenticationProvider({ children }: React.PropsWithChildren) {
     const data = response?.data[0];
 
     if (data) {
-      const token = data.token;
+      const accessToken = data.access_token;
+      const refreshToken = data.refresh_token
       const user = data.of_account;
 
-      if (token && user) {
+      if (accessToken && user) {
         setIsLoggedIn(true);
         setUser(user);
 
-        await AsyncStorage.setItem('token', token);
+        await AsyncStorage.setItem('accessToken', accessToken);
+        await AsyncStorage.setItem('refreshToken', refreshToken);
         await AsyncStorage.setItem('user', JSON.stringify(user));
 
         router.replace("/(authed)/(tabs)/(events)");
@@ -82,7 +84,7 @@ export function AuthenticationProvider({ children }: React.PropsWithChildren) {
     setIsLoggedIn(false);
     setUser(null);
 
-    await AsyncStorage.removeItem('token');
+    await AsyncStorage.removeItem('accessToken');
     await AsyncStorage.removeItem('user');
   }
 

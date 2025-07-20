@@ -5,7 +5,7 @@ import (
 	"Gober/internal/handler/grpc"
 	"Gober/internal/handler/http"
 	redis "Gober/pkg/cache"
-	"Gober/pkg/jwt"
+	"Gober/utils/jwt"
 	"context"
 	"log"
 	"os"

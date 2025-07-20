@@ -6,7 +6,7 @@ import (
 	"Gober/internal/repo/mysql"
 	"Gober/internal/service"
 	"Gober/pkg/cache"
-	"Gober/pkg/jwt"
+	"Gober/utils/jwt"
 	"context"
 	"fmt"
 	"google.golang.org/grpc"

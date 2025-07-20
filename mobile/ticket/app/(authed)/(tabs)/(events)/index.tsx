@@ -59,7 +59,7 @@ export default function EventsScreen() {
   }, [navigation, user]);
 
   return (
-    <VStack flex={ 1 } p={ 20 } pb={ 0 } gap={ 20 }>
+    <VStack flex={ 1 } p={ 20 } pb={ 0 } gap={ 30 }>
 
       <HStack alignItems='center' justifyContent='space-between'>
         <Text fontSize={ 18 } bold>{ events?.events.length } Events</Text>
@@ -72,16 +72,19 @@ export default function EventsScreen() {
         refreshing={ isLoading }
         renderItem={ ({ item: event }) => (
           <VStack
-            gap={ 20 }
-            p={ 20 }
-            style={{
+            padding={ 20 }
+            {...({ style: {
               backgroundColor: 'white',
               borderRadius: 20,
-            }} 
-            key={ event.event_id }>
+              gap: 10
+            }} as any)}
+            key={ event.event_id } >
 
             <TouchableOpacity onPress={ () => onGoToEventPage(event.event_id) }>
-              <HStack alignItems='center' justifyContent="space-between">
+              <HStack 
+                alignItems='center' 
+                justifyContent="space-between"
+              >
                 <HStack alignItems='center'>
                   <Text fontSize={ 26 } bold >{ event.title }</Text>
                   <Text fontSize={ 26 } bold > | </Text>
@@ -94,11 +97,10 @@ export default function EventsScreen() {
             <Divider />
 
             <HStack justifyContent='space-between'>
-
-              {/* <VStack gap={ 10 }>
-                <Text bold fontSize={ 16 } color='gray'>Sold: { event.totalTicketsPurchased }</Text>
-                <Text bold fontSize={ 16 } color='green'>Entered: { event.totalTicketsEntered }</Text>
-              </VStack> */}
+              <VStack gap={ 10 }>
+                <Text bold fontSize={ 16 } color='gray'>Sold: 0</Text>
+                <Text bold fontSize={ 16 } color='green'>Entered:0</Text>
+              </VStack>
 
               { user?.role === UserRole.Attendee && (
                 <VStack>

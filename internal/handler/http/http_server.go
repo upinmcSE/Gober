@@ -5,8 +5,8 @@ import (
 	"Gober/internal/generated/grpc/gober"
 	"Gober/internal/middleware"
 	"Gober/pkg/cache"
-	"Gober/pkg/jwt"
 	"Gober/pkg/logger"
+	"Gober/utils/jwt"
 	"context"
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc"
@@ -119,7 +119,7 @@ func (h *httpServer) setupRoutes(rg *gin.RouterGroup) {
 	event.Use(middleware.AuthMiddleware())
 	event.POST("/create", eventHandler.CreateEventHandler)
 	event.GET("/:id", eventHandler.GetEventHandler)
-	event.GET("/", eventHandler.ListEventsHandler)
+	event.GET("", eventHandler.ListEventsHandler)
 	event.PATCH("/:id", eventHandler.UpdateEventHandler)
 	event.DELETE("/:id", eventHandler.DeleteEventHandler)
 
@@ -127,7 +127,7 @@ func (h *httpServer) setupRoutes(rg *gin.RouterGroup) {
 	ticket.Use(middleware.AuthMiddleware())
 	ticket.POST("/create", ticketHandler.CreateTicketHandler)
 	ticket.GET("/:id", ticketHandler.GetTicketHandler)
-	ticket.GET("/", ticketHandler.ListTicketsHandler)
+	ticket.GET("", ticketHandler.ListTicketsHandler)
 	ticket.PATCH("/:id", ticketHandler.UpdateTicketHandler)
 }
 

@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"Gober/pkg/cache"
-	"Gober/pkg/jwt"
+	"Gober/utils/jwt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strings"

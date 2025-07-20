@@ -6,7 +6,7 @@ export enum UserRole {
 }
 
 export type AuthResponse = ApiResponse<
-    { of_account: User; token: string; }
+    { of_account: User; access_token: string; refresh_token: string}
 >;
 
 export type User = {

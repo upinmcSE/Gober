@@ -7,7 +7,7 @@ import { useOnScreenFocusCallback } from '@/hooks/useOnScreenFocusCallback';
 import { eventService } from '@/services/events';
 import { Event } from '@/types/event';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { useLocalSearchParams, useNavigation, router } from 'expo-router';
+import { router, useLocalSearchParams, useNavigation } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import { Alert } from 'react-native';
 
@@ -47,7 +47,7 @@ export default function EventDetailsScreen() {
     try {
       setIsSubmitting(true);
       await eventService.updateOne(Number(id),
-        eventData.name,
+        eventData.title,
         eventData.location,
         eventData.date
       );
@@ -83,9 +83,9 @@ export default function EventDetailsScreen() {
       <VStack gap={ 5 }>
         <Text ml={ 10 } fontSize={ 14 } color="gray">Name</Text>
         <Input
-          value={ eventData?.name }
-          onChangeText={ (value) => updateField("name", value) }
-          placeholder="Name"
+          value={ eventData?.title }
+          onChangeText={ (value) => updateField("title", value) }
+          placeholder="Title"
           placeholderTextColor="darkgray"
           h={ 48 }
           p={ 14 }

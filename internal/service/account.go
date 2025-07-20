@@ -4,7 +4,7 @@ import (
 	"Gober/internal/generated/grpc/gober"
 	"Gober/internal/repo/mysql"
 	"Gober/pkg/cache"
-	"Gober/pkg/jwt"
+	"Gober/utils/jwt"
 	"context"
 	"fmt"
 	"time"
