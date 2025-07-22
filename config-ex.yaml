@@ -1,0 +1,26 @@
+server:
+  portGrpc:
+  portHttp:
+  apiKey:
+  rateLimit:
+    requestSec:
+    requestBurst:
+
+database:
+  user:
+  password:
+  dbname:
+  host:
+  port:
+
+redis:
+  addr:
+  username:
+  password:
+  db:
+
+security:
+  secretKey:
+  expiration:
+    accessToken:
+    refreshToken:
