@@ -32,16 +32,15 @@ Gober is a mobile application designed to manage events and tickets. It allows a
 Users can set the events they want to attend. The application is built using modern technologies and provides a user-friendly interface for both administrators and regular users.
 
 
-<img src="docs/admin_event.jpg" alt="Demo 1" width="200" height="300" />
-<img src="docs/user_event.jpg" alt="Demo 2" width="200" height="300" />
-<img src="docs/admin_new_event.jpg" alt="Demo 3" width="200" height="300" />
-
-<img src="docs/admin_update_event.jpg" alt="Demo 4" width="200" height="300" />
-
-<img src="docs/admin_scan_ticket.jpg" alt="Demo 5" width="200" height="300" />
-
-<img src="docs/user_ticket_list.jpg" alt="Demo 6" width="200" height="300" />
-<img src="docs/user_ticket.jpg" alt="Demo 6" width="200" height="300" />
+<div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-start;">
+  <img src="docs/admin_event.jpg" alt="Demo 1" width="200" height="300" />
+  <img src="docs/user_event.jpg" alt="Demo 2" width="200" height="300" />
+  <img src="docs/admin_new_event.jpg" alt="Demo 3" width="200" height="300" />
+  <img src="docs/admin_update_event.jpg" alt="Demo 4" width="200" height="300" />
+  <img src="docs/admin_scan_ticket.jpg" alt="Demo 5" width="200" height="300" />
+  <img src="docs/user_ticket_list.jpg" alt="Demo 6" width="200" height="300" />
+  <img src="docs/user_ticket.jpg" alt="Demo 7" width="200" height="300" />
+</div>
 
 
 ### Built With
