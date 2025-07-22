@@ -59,28 +59,62 @@ func (t ticketDatabase) GetTicket(ctx context.Context, accountId uint64, ticketI
 }
 
 func (t ticketDatabase) CreateTicket(ctx context.Context, accountId uint64, ticket *Ticket) (*Ticket, error) {
-	res := t.db.Model(ticket).Create(ticket)
+	err := t.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		// Tạo ticket
+		if err := tx.Create(ticket).Error; err != nil {
+			return err
+		}
 
-	if res.Error != nil {
-		return nil, res.Error
-	}
+		// Cập nhật total_tickets_purchased trong Event
+		if err := tx.Model(&Event{}).
+			Where("id = ?", ticket.EventID).
+			Update("total_tickets_purchased", gorm.Expr("total_tickets_purchased + ?", 1)).Error; err != nil {
+			return err
+		}
+		return nil
+	})
 
-	return t.GetTicket(ctx, accountId, ticket.ID)
-}
-
-func (t ticketDatabase) UpdateTicket(ctx context.Context, ticketId uint64) (*Ticket, error) {
-	ticket := &Ticket{}
-	res := t.db.First(ticket, ticketId)
-	if res.Error != nil {
-		return nil, res.Error
-	}
-
-	ticket.Entered = true
-	if err := t.db.Save(ticket).Error; err != nil {
+	if err != nil {
 		return nil, err
 	}
 
-	return ticket, nil
+	result, err := t.GetTicket(ctx, accountId, ticket.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	return result, nil
+}
+
+func (t ticketDatabase) UpdateTicket(ctx context.Context, ticketId uint64) (*Ticket, error) {
+	var updatedTicket *Ticket
+
+	err := t.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		ticket := &Ticket{}
+		if err := tx.First(ticket, ticketId).Error; err != nil {
+			return err
+		}
+
+		ticket.Entered = true
+		if err := tx.Save(ticket).Error; err != nil {
+			return err
+		}
+
+		if err := tx.Model(&Event{}).
+			Where("id = ?", ticket.EventID).
+			Update("total_tickets_entered", gorm.Expr("total_tickets_entered + ?", 1)).Error; err != nil {
+			return err
+		}
+
+		updatedTicket = ticket
+		return nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return updatedTicket, nil
 }
 
 func NewTicketDatabase(db *gorm.DB) TicketDatabase {

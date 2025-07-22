@@ -98,8 +98,8 @@ export default function EventsScreen() {
 
             <HStack justifyContent='space-between'>
               <VStack gap={ 10 }>
-                <Text bold fontSize={ 16 } color='gray'>Sold: 0</Text>
-                <Text bold fontSize={ 16 } color='green'>Entered:0</Text>
+                <Text bold fontSize={ 16 } color='gray'>Sold: {event.total_tickets_purchased ?? 0}</Text>
+                <Text bold fontSize={ 16 } color='green'>Entered: {event.total_tickets_entered ?? 0}</Text>
               </VStack>
 
               { user?.role === UserRole.Attendee && (

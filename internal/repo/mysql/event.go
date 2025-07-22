@@ -11,8 +11,8 @@ type Event struct {
 	ID                    uint64    `json:"id" gorm:"primarykey"`
 	Title                 string    `json:"title"`
 	Location              string    `json:"location"`
-	TotalTicketsPurchased uint64    `json:"totalTicketsPurchased" gorm:"-"`
-	TotalTicketsEntered   uint64    `json:"totalTicketsEntered" gorm:"-"`
+	TotalTicketsPurchased uint64    `json:"totalTicketsPurchased"`
+	TotalTicketsEntered   uint64    `json:"totalTicketsEntered"`
 	Date                  time.Time `json:"date"`
 	CreatedAt             time.Time `json:"createdAt"`
 	UpdatedAt             time.Time `json:"updatedAt"`
@@ -60,39 +60,55 @@ func (e eventDatabase) GetEvent(ctx context.Context, eventId uint64) (*Event, er
 }
 
 func (e eventDatabase) CreateEvent(ctx context.Context, event *Event) (*Event, error) {
-	res := e.db.Model(event).Create(event)
+	var createdEvent *Event
 
-	if res.Error != nil {
-		return nil, res.Error
+	err := e.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		if err := tx.Create(event).Error; err != nil {
+			return err
+		}
+
+		createdEvent = event
+		return nil
+	})
+
+	if err != nil {
+		return nil, err
 	}
 
-	return event, nil
+	return createdEvent, nil
 }
 
 func (e eventDatabase) UpdateEvent(ctx context.Context, eventId uint64, updateData map[string]interface{}) (*Event, error) {
-	event := new(Event)
+	var updatedEvent *Event
 
-	updateRes := e.db.WithContext(ctx).Where("id = ?", eventId).Updates(updateData)
+	err := e.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		if err := tx.Model(&Event{}).Where("id = ?", eventId).Updates(updateData).Error; err != nil {
+			return err
+		}
 
-	if updateRes.Error != nil {
-		return nil, updateRes.Error
+		event := new(Event)
+		if err := tx.First(event, eventId).Error; err != nil {
+			return err
+		}
+
+		updatedEvent = event
+		return nil
+	})
+
+	if err != nil {
+		return nil, err
 	}
 
-	getRes := e.db.Model(event).Where("id = ?", eventId).First(event)
-
-	if getRes.Error != nil {
-		return nil, getRes.Error
-	}
-
-	return event, nil
+	return updatedEvent, nil
 }
 
 func (e eventDatabase) DeleteEvent(ctx context.Context, eventId uint64) error {
-	res := e.db.Delete(&Event{}, eventId)
-	if res.Error != nil {
-		return res.Error
-	}
-	return nil
+	return e.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		if err := tx.Delete(&Event{}, eventId).Error; err != nil {
+			return err
+		}
+		return nil
+	})
 }
 
 func (e *Event) AfterFind(db *gorm.DB) (err error) {

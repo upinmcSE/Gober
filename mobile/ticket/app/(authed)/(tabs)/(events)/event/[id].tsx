@@ -81,7 +81,7 @@ export default function EventDetailsScreen() {
     <VStack m={ 20 } flex={ 1 } gap={ 30 }>
 
       <VStack gap={ 5 }>
-        <Text ml={ 10 } fontSize={ 14 } color="gray">Name</Text>
+        <Text ml={ 10 } fontSize={ 14 } color="gray">Title</Text>
         <Input
           value={ eventData?.title }
           onChangeText={ (value) => updateField("title", value) }
@@ -97,7 +97,7 @@ export default function EventDetailsScreen() {
         <Input
           value={ eventData?.location }
           onChangeText={ (value) => updateField("location", value) }
-          placeholder="Name"
+          placeholder="Location"
           placeholderTextColor="darkgray"
           h={ 48 }
           p={ 14 }

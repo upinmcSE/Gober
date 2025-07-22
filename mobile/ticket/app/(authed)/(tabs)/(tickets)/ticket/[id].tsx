@@ -38,15 +38,13 @@ export default function TicketDetailsScreen() {
 
   return (
     <VStack
-      alignItems='center'
-      m={ 20 }
-      p={ 20 }
-      gap={ 20 }
-      flex={ 1 }
-      style={ {
-        backgroundColor: 'white',
-        borderRadius: 20,
-      } }
+      {...({style:{
+        flex: 1,
+        alignItems: 'center',
+        gap: 20,
+        margin: 20,
+        padding: 20,
+      }} as any)}
     >
       <Text fontSize={ 50 } bold >{ ticketData.event.title }</Text>
       <Text fontSize={ 20 } bold >{ ticketData.event.location }</Text>

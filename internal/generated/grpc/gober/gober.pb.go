@@ -262,6 +262,7 @@ type Ticket struct {
 	TicketId      uint64                 `protobuf:"varint,1,opt,name=ticket_id,json=ticketId,proto3" json:"ticket_id,omitempty"`
 	EventId       uint64                 `protobuf:"varint,2,opt,name=event_id,json=eventId,proto3" json:"event_id,omitempty"`
 	AccountId     uint64                 `protobuf:"varint,3,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
+	Event         *Event                 `protobuf:"bytes,4,opt,name=event,proto3" json:"event,omitempty"`
 	Entered       bool                   `protobuf:"varint,5,opt,name=entered,proto3" json:"entered,omitempty"`
 	CreatedAt     string                 `protobuf:"bytes,6,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt     string                 `protobuf:"bytes,7,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
@@ -318,6 +319,13 @@ func (x *Ticket) GetAccountId() uint64 {
 		return x.AccountId
 	}
 	return 0
+}
+
+func (x *Ticket) GetEvent() *Event {
+	if x != nil {
+		return x.Event
+	}
+	return nil
 }
 
 func (x *Ticket) GetEntered() bool {
@@ -1540,6 +1548,7 @@ func (x *GetTicketRequest) GetTicketId() uint64 {
 type GetTicketResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Ticket        *Ticket                `protobuf:"bytes,1,opt,name=ticket,proto3" json:"ticket,omitempty"`
+	Qrcode        []byte                 `protobuf:"bytes,2,opt,name=qrcode,proto3" json:"qrcode,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1577,6 +1586,13 @@ func (*GetTicketResponse) Descriptor() ([]byte, []int) {
 func (x *GetTicketResponse) GetTicket() *Ticket {
 	if x != nil {
 		return x.Ticket
+	}
+	return nil
+}
+
+func (x *GetTicketResponse) GetQrcode() []byte {
+	if x != nil {
+		return x.Qrcode
 	}
 	return nil
 }
@@ -1729,12 +1745,14 @@ const file_api_gober_proto_rawDesc = "" +
 	"\vEventUpdate\x12\x14\n" +
 	"\x05title\x18\x01 \x01(\tR\x05title\x12\x1a\n" +
 	"\blocation\x18\x02 \x01(\tR\blocation\x12\x12\n" +
-	"\x04date\x18\x03 \x01(\tR\x04date\"\xb7\x01\n" +
+	"\x04date\x18\x03 \x01(\tR\x04date\"\xd9\x01\n" +
 	"\x06Ticket\x12\x1b\n" +
 	"\tticket_id\x18\x01 \x01(\x04R\bticketId\x12\x19\n" +
 	"\bevent_id\x18\x02 \x01(\x04R\aeventId\x12\x1d\n" +
 	"\n" +
-	"account_id\x18\x03 \x01(\x04R\taccountId\x12\x18\n" +
+	"account_id\x18\x03 \x01(\x04R\taccountId\x12 \n" +
+	"\x05event\x18\x04 \x01(\v2\n" +
+	".api.EventR\x05event\x12\x18\n" +
 	"\aentered\x18\x05 \x01(\bR\aentered\x12\x1d\n" +
 	"\n" +
 	"created_at\x18\x06 \x01(\tR\tcreatedAt\x12\x1d\n" +
@@ -1813,9 +1831,10 @@ const file_api_gober_proto_rawDesc = "" +
 	"\x10GetTicketRequest\x12\x1d\n" +
 	"\n" +
 	"account_id\x18\x01 \x01(\x04R\taccountId\x12\x1b\n" +
-	"\tticket_id\x18\x02 \x01(\x04R\bticketId\"8\n" +
+	"\tticket_id\x18\x02 \x01(\x04R\bticketId\"P\n" +
 	"\x11GetTicketResponse\x12#\n" +
-	"\x06ticket\x18\x01 \x01(\v2\v.api.TicketR\x06ticket\"a\n" +
+	"\x06ticket\x18\x01 \x01(\v2\v.api.TicketR\x06ticket\x12\x16\n" +
+	"\x06qrcode\x18\x02 \x01(\fR\x06qrcode\"a\n" +
 	"\x12ListTicketsRequest\x12\x1d\n" +
 	"\n" +
 	"account_id\x18\x01 \x01(\x04R\taccountId\x12\x16\n" +
@@ -1891,52 +1910,53 @@ var file_api_gober_proto_goTypes = []any{
 	(*ListTicketsResponse)(nil),    // 31: api.ListTicketsResponse
 }
 var file_api_gober_proto_depIdxs = []int32{
-	0,  // 0: api.CreateSessionResponse.of_account:type_name -> api.Account
-	0,  // 1: api.RefreshSessionResponse.of_account:type_name -> api.Account
-	0,  // 2: api.GetAccountResponse.of_account:type_name -> api.Account
-	2,  // 3: api.CreateEventRequest.event_update:type_name -> api.EventUpdate
-	1,  // 4: api.CreateEventResponse.event:type_name -> api.Event
-	2,  // 5: api.UpdateEventRequest.event_update:type_name -> api.EventUpdate
-	1,  // 6: api.UpdateEventResponse.event:type_name -> api.Event
-	1,  // 7: api.GetEventResponse.event:type_name -> api.Event
-	1,  // 8: api.ListEventsResponse.events:type_name -> api.Event
-	3,  // 9: api.CreateTicketResponse.ticket:type_name -> api.Ticket
-	3,  // 10: api.UpdateTicketResponse.ticket:type_name -> api.Ticket
-	3,  // 11: api.GetTicketResponse.ticket:type_name -> api.Ticket
-	3,  // 12: api.ListTicketsResponse.tickets:type_name -> api.Ticket
-	4,  // 13: api.GoberService.CreateAccount:input_type -> api.CreateAccountRequest
-	6,  // 14: api.GoberService.CreateSession:input_type -> api.CreateSessionRequest
-	8,  // 15: api.GoberService.RefreshSession:input_type -> api.RefreshSessionRequest
-	10, // 16: api.GoberService.GetAccount:input_type -> api.GetAccountRequest
-	12, // 17: api.GoberService.DeleteSession:input_type -> api.DeleteSessionRequest
-	14, // 18: api.GoberService.CreateEvent:input_type -> api.CreateEventRequest
-	16, // 19: api.GoberService.UpdateEvent:input_type -> api.UpdateEventRequest
-	18, // 20: api.GoberService.DeleteEvent:input_type -> api.DeleteEventRequest
-	20, // 21: api.GoberService.GetEvent:input_type -> api.GetEventRequest
-	22, // 22: api.GoberService.GetEvents:input_type -> api.ListEventsRequest
-	24, // 23: api.GoberService.CreateTicket:input_type -> api.CreateTicketRequest
-	26, // 24: api.GoberService.UpdateTicket:input_type -> api.UpdateTicketRequest
-	28, // 25: api.GoberService.GetTicket:input_type -> api.GetTicketRequest
-	30, // 26: api.GoberService.GetTickets:input_type -> api.ListTicketsRequest
-	5,  // 27: api.GoberService.CreateAccount:output_type -> api.CreateAccountResponse
-	7,  // 28: api.GoberService.CreateSession:output_type -> api.CreateSessionResponse
-	9,  // 29: api.GoberService.RefreshSession:output_type -> api.RefreshSessionResponse
-	11, // 30: api.GoberService.GetAccount:output_type -> api.GetAccountResponse
-	13, // 31: api.GoberService.DeleteSession:output_type -> api.DeleteSessionResponse
-	15, // 32: api.GoberService.CreateEvent:output_type -> api.CreateEventResponse
-	17, // 33: api.GoberService.UpdateEvent:output_type -> api.UpdateEventResponse
-	19, // 34: api.GoberService.DeleteEvent:output_type -> api.DeleteEventResponse
-	21, // 35: api.GoberService.GetEvent:output_type -> api.GetEventResponse
-	23, // 36: api.GoberService.GetEvents:output_type -> api.ListEventsResponse
-	25, // 37: api.GoberService.CreateTicket:output_type -> api.CreateTicketResponse
-	27, // 38: api.GoberService.UpdateTicket:output_type -> api.UpdateTicketResponse
-	29, // 39: api.GoberService.GetTicket:output_type -> api.GetTicketResponse
-	31, // 40: api.GoberService.GetTickets:output_type -> api.ListTicketsResponse
-	27, // [27:41] is the sub-list for method output_type
-	13, // [13:27] is the sub-list for method input_type
-	13, // [13:13] is the sub-list for extension type_name
-	13, // [13:13] is the sub-list for extension extendee
-	0,  // [0:13] is the sub-list for field type_name
+	1,  // 0: api.Ticket.event:type_name -> api.Event
+	0,  // 1: api.CreateSessionResponse.of_account:type_name -> api.Account
+	0,  // 2: api.RefreshSessionResponse.of_account:type_name -> api.Account
+	0,  // 3: api.GetAccountResponse.of_account:type_name -> api.Account
+	2,  // 4: api.CreateEventRequest.event_update:type_name -> api.EventUpdate
+	1,  // 5: api.CreateEventResponse.event:type_name -> api.Event
+	2,  // 6: api.UpdateEventRequest.event_update:type_name -> api.EventUpdate
+	1,  // 7: api.UpdateEventResponse.event:type_name -> api.Event
+	1,  // 8: api.GetEventResponse.event:type_name -> api.Event
+	1,  // 9: api.ListEventsResponse.events:type_name -> api.Event
+	3,  // 10: api.CreateTicketResponse.ticket:type_name -> api.Ticket
+	3,  // 11: api.UpdateTicketResponse.ticket:type_name -> api.Ticket
+	3,  // 12: api.GetTicketResponse.ticket:type_name -> api.Ticket
+	3,  // 13: api.ListTicketsResponse.tickets:type_name -> api.Ticket
+	4,  // 14: api.GoberService.CreateAccount:input_type -> api.CreateAccountRequest
+	6,  // 15: api.GoberService.CreateSession:input_type -> api.CreateSessionRequest
+	8,  // 16: api.GoberService.RefreshSession:input_type -> api.RefreshSessionRequest
+	10, // 17: api.GoberService.GetAccount:input_type -> api.GetAccountRequest
+	12, // 18: api.GoberService.DeleteSession:input_type -> api.DeleteSessionRequest
+	14, // 19: api.GoberService.CreateEvent:input_type -> api.CreateEventRequest
+	16, // 20: api.GoberService.UpdateEvent:input_type -> api.UpdateEventRequest
+	18, // 21: api.GoberService.DeleteEvent:input_type -> api.DeleteEventRequest
+	20, // 22: api.GoberService.GetEvent:input_type -> api.GetEventRequest
+	22, // 23: api.GoberService.GetEvents:input_type -> api.ListEventsRequest
+	24, // 24: api.GoberService.CreateTicket:input_type -> api.CreateTicketRequest
+	26, // 25: api.GoberService.UpdateTicket:input_type -> api.UpdateTicketRequest
+	28, // 26: api.GoberService.GetTicket:input_type -> api.GetTicketRequest
+	30, // 27: api.GoberService.GetTickets:input_type -> api.ListTicketsRequest
+	5,  // 28: api.GoberService.CreateAccount:output_type -> api.CreateAccountResponse
+	7,  // 29: api.GoberService.CreateSession:output_type -> api.CreateSessionResponse
+	9,  // 30: api.GoberService.RefreshSession:output_type -> api.RefreshSessionResponse
+	11, // 31: api.GoberService.GetAccount:output_type -> api.GetAccountResponse
+	13, // 32: api.GoberService.DeleteSession:output_type -> api.DeleteSessionResponse
+	15, // 33: api.GoberService.CreateEvent:output_type -> api.CreateEventResponse
+	17, // 34: api.GoberService.UpdateEvent:output_type -> api.UpdateEventResponse
+	19, // 35: api.GoberService.DeleteEvent:output_type -> api.DeleteEventResponse
+	21, // 36: api.GoberService.GetEvent:output_type -> api.GetEventResponse
+	23, // 37: api.GoberService.GetEvents:output_type -> api.ListEventsResponse
+	25, // 38: api.GoberService.CreateTicket:output_type -> api.CreateTicketResponse
+	27, // 39: api.GoberService.UpdateTicket:output_type -> api.UpdateTicketResponse
+	29, // 40: api.GoberService.GetTicket:output_type -> api.GetTicketResponse
+	31, // 41: api.GoberService.GetTickets:output_type -> api.ListTicketsResponse
+	28, // [28:42] is the sub-list for method output_type
+	14, // [14:28] is the sub-list for method input_type
+	14, // [14:14] is the sub-list for extension type_name
+	14, // [14:14] is the sub-list for extension extendee
+	0,  // [0:14] is the sub-list for field type_name
 }
 
 func init() { file_api_gober_proto_init() }

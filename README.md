@@ -30,40 +30,21 @@
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
-
-<!-- Demo Images Grid -->
+Gober is a mobile application designed to manage events and tickets. It allows admin to create, update, and delete events, as well as manage check-ins.
+Users can set the events they want to attend. The application is built using modern technologies and provides a user-friendly interface for both administrators and regular users.
 
 <div align="center">
-  <table>
-    <tr>
-      <td align="center">
-        <img src="docs/admin_event.jpg" alt="Demo 1" width="300" height="200" />
-        <br />
-      </td>
-      <td align="center">
-        <img src="docs/user_event.jpg" alt="Demo 2" width="300" height="200" />
-        <br />
-      </td>
-      <td align="center">
-        <img src="docs/admin_new_event.jpg" alt="Demo 3" width="300" height="200" />
-        <br />
-      </td>
-    </tr>
-    <tr>
-      <td align="center">
-        <img src="docs/admin_update_event.jpg" alt="Demo 4" width="300" height="200" />
-        <br />
-      </td>
-      <td align="center">
-        <img src="docs/demo5.png" alt="Demo 5" width="300" height="200" />
-        <br />
-      </td>
-      <td align="center">
-        <img src="docs/demo6.png" alt="Demo 6" width="300" height="200" />
-        <br />
-      </td>
-    </tr>
-  </table>
+
+<img src="docs/admin_event.jpg" alt="Demo 1" width="150" height="200" />
+<img src="docs/user_event.jpg" alt="Demo 2" width="150" height="200" />
+<img src="docs/admin_new_event.jpg" alt="Demo 3" width="150" height="200" />
+
+<img src="docs/admin_update_event.jpg" alt="Demo 4" width="150" height="200" />
+
+<img src="docs/admin_scan_ticket.jpg" alt="Demo 5" width="150" height="200" />
+
+<img src="docs/user_ticket_list.jpg" alt="Demo 6" width="150" height="200" />
+<img src="docs/user_ticket.jpg" alt="Demo 6" width="150" height="200" />
 </div>
 
 ### Built With

@@ -70,6 +70,6 @@ func main() {
 
 	// Graceful shutdown
 	cancel()
-	time.Sleep(5 * time.Second) // Give servers time to shutdown
+	time.Sleep(5 * time.Second)
 	log.Println("Servers stopped")
 }

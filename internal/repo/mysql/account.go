@@ -44,9 +44,7 @@ func (a *accountDatabase) CreateAccount(ctx context.Context, account *Account) (
 		if err := tx.Create(account).Error; err != nil {
 			return err // rollback
 		}
-		// Nếu muốn thao tác thêm ở đây, bạn dùng `tx` tiếp tục
 
-		// Gán kết quả để return sau khi commit
 		result = account
 		return nil // commit
 	})

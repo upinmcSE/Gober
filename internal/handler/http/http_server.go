@@ -128,7 +128,7 @@ func (h *httpServer) setupRoutes(rg *gin.RouterGroup) {
 	ticket.POST("/create", ticketHandler.CreateTicketHandler)
 	ticket.GET("/:id", ticketHandler.GetTicketHandler)
 	ticket.GET("", ticketHandler.ListTicketsHandler)
-	ticket.PATCH("/:id", ticketHandler.UpdateTicketHandler)
+	ticket.PATCH("/validate", ticketHandler.UpdateTicketHandler)
 }
 
 func (h *httpServer) shutdown() error {

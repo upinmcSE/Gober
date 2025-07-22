@@ -60,7 +60,7 @@ func (t ticketService) CreateTicket(ctx context.Context, params CreateTicketPara
 
 	createdTicket, err := t.db.CreateTicket(ctx, params.AccountId, ticket)
 	if err != nil {
-		return nil, status.Error(codes.Internal, "Không thể tạo vé mới")
+		return nil, status.Error(codes.NotFound, "Không thể tạo vé mới")
 	}
 
 	return createdTicket, nil

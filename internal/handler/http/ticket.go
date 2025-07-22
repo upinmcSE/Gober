@@ -56,7 +56,13 @@ func (th *TicketHandler) GetTicketHandler(c *gin.Context) {
 		return
 	}
 
-	resp, err := th.client.GetTicket(c, &gober.GetTicketRequest{TicketId: id})
+	value, _ := c.Get("accountID")
+	accountID, _ := value.(uint64)
+
+	resp, err := th.client.GetTicket(c, &gober.GetTicketRequest{
+		TicketId:  id,
+		AccountId: accountID,
+	})
 	if err != nil {
 		response.HandleGrpcError(c, err)
 		return
@@ -99,30 +105,13 @@ func (th *TicketHandler) ListTicketsHandler(c *gin.Context) {
 }
 
 func (th *TicketHandler) UpdateTicketHandler(c *gin.Context) {
-	ticketID := c.Param("id")
-	if ticketID == "" {
+	req := &gober.UpdateTicketRequest{}
+	if err := c.ShouldBindJSON(req); err != nil {
 		response.ResponseError(c, 400, &response.AppError{
-			Message: "Ticket ID is required",
+			Message: "Invalid request",
 			Code:    response.ErrCodeBadRequest,
 		})
 		return
-	}
-
-	id, err := strconv.ParseUint(ticketID, 10, 64)
-	if err != nil {
-		response.ResponseError(c, 400, &response.AppError{
-			Message: "Invalid Ticket ID format",
-			Code:    response.ErrCodeBadRequest,
-		})
-		return
-	}
-
-	value, _ := c.Get("accountID")
-	accountID, _ := value.(uint64)
-
-	req := &gober.UpdateTicketRequest{
-		AccountId: accountID,
-		TicketId:  id,
 	}
 
 	resp, err := th.client.UpdateTicket(c, req)

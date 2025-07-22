@@ -5,6 +5,7 @@ import (
 	"Gober/internal/service"
 	"context"
 	"fmt"
+	"github.com/skip2/go-qrcode"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"time"
@@ -232,11 +233,22 @@ func (h *GoberHandler) GetTickets(ctx context.Context, req *gober.ListTicketsReq
 	}
 
 	var ticketResponses []*gober.Ticket
+
 	for _, ticket := range tickets {
 		ticketResponses = append(ticketResponses, &gober.Ticket{
 			TicketId:  ticket.ID,
 			EventId:   ticket.EventID,
 			AccountId: ticket.AccountID,
+			Event: &gober.Event{
+				EventId:               ticket.Event.ID,
+				Title:                 ticket.Event.Title,
+				Location:              ticket.Event.Location,
+				TotalTicketsPurchased: ticket.Event.TotalTicketsPurchased,
+				TotalTicketsEntered:   ticket.Event.TotalTicketsEntered,
+				Date:                  ticket.Event.Date.Format("2006-01-02T15:04:05Z07:00"),
+				CreatedAt:             ticket.Event.CreatedAt.Format("2006-01-02T15:04:05Z07:00"),
+				UpdatedAt:             ticket.Event.UpdatedAt.Format("2006-01-02T15:04:05Z07:00"),
+			},
 			Entered:   ticket.Entered,
 			CreatedAt: ticket.CreatedAt.Format("2006-01-02T15:04:05Z07:00"),
 			UpdatedAt: ticket.UpdatedAt.Format("2006-01-02T15:04:05Z07:00"),
@@ -259,15 +271,33 @@ func (h *GoberHandler) GetTicket(ctx context.Context, req *gober.GetTicketReques
 		return nil, err
 	}
 
+	var QRCode []byte
+	QRCode, err = qrcode.Encode(
+		fmt.Sprintf("ticketId:%v,ownerId:%v", ticket.ID, ticket.AccountID),
+		qrcode.Medium,
+		256,
+	)
+
 	return &gober.GetTicketResponse{
 		Ticket: &gober.Ticket{
 			TicketId:  ticket.ID,
 			EventId:   ticket.EventID,
 			AccountId: ticket.AccountID,
+			Event: &gober.Event{
+				EventId:               ticket.EventID,
+				Title:                 ticket.Event.Title,
+				Location:              ticket.Event.Location,
+				TotalTicketsPurchased: ticket.Event.TotalTicketsPurchased,
+				TotalTicketsEntered:   ticket.Event.TotalTicketsEntered,
+				Date:                  ticket.Event.Date.Format("2006-01-02T15:04:05Z07:00"),
+				CreatedAt:             ticket.Event.CreatedAt.Format("2006-01-02T15:04:05Z07:00"),
+				UpdatedAt:             ticket.Event.UpdatedAt.Format("2006-01-02T15:04:05Z07:00"),
+			},
 			Entered:   ticket.Entered,
 			CreatedAt: ticket.CreatedAt.Format("2006-01-02T15:04:05Z07:00"),
 			UpdatedAt: ticket.UpdatedAt.Format("2006-01-02T15:04:05Z07:00"),
 		},
+		Qrcode: QRCode,
 	}, nil
 }
 
